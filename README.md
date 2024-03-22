@@ -1,2 +1,2 @@
 # Arquitectura.Software.1
-# integrantes:
+# integrantes: Lista Joaquin
