@@ -1,2 +1,3 @@
 # Arquitectura.Software.1
-# integrantes: Lista Joaquin
+# integrantes: Lista Joaquin , Nahmias Arnon, Felipe Ganame
+               
