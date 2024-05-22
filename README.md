@@ -36,19 +36,33 @@
 
 - **/final**
 - **/backend**
+
   **main.go**
+
   **controllers**
+
   **users -> users_controller.go**
+
   **courses -> courses_controller.go**
+
   **domain**
+
   **users -> users_domain.go**
+
   **courses -> courses_domain.go**
+
   **services**
+
   **users -> users_service.go**
+
   **courses -> courses_service.go**
+
   **clients**
+
   **db-client.go**
+
 - **app / router.go**
+
 - **/frontend**
 
 ### Link al Proyecto
