@@ -1,13 +1,18 @@
 package main
 
 import (
-	"backend/router"
+	"backend/clients"
+	"backend/controllers"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	engine := gin.New()
-	router.MapUrls(engine)
-	engine.Run(":8080")
+	clients.ConnectDatabase()
+	router := gin.New()
+	router.POST("/login", controllers.Login)
+	router.POST("/courses/search", controllers.Search)
+	router.GET("/courses/:id", controllers.Get)
+	router.POST("/subscriptions", controllers.Subscribe)
+	router.Run(":8080")
 }

@@ -21,7 +21,11 @@ func Login(email string, password string) (string, error) {
 
 	userDAO, err := services.GetUserByEmail(email)
 	if err != nil {
-		return "", fmt.Errorf("invalid credentials")
+		return "", fmt.Errorf("error getting user from DB: %s", err)
+	}
+
+	if hash!= userDAO.PasswordHash{
+		return "", fmt.Errorf("Invalid credentials")
 	}
 
 	//TODO: Replace this with JWT token generation
