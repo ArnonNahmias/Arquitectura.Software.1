@@ -37,5 +37,5 @@ func main() {
 	// ... Additional user data and operations
 	users := db[tableNameUsers].([]dao.User)
 	fmt.Println("User 1:", users[0])
-	fmt.Println("User 2:", users[1])
+	fmt.Println("User 2:", users[1]) // This will fail
 }
