@@ -1,11 +1,10 @@
 package services
 
 import (
-	"backend/domain"
-	"backend/services"
+	"backend/clients"
+	"crypto/md5"
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 )
 
