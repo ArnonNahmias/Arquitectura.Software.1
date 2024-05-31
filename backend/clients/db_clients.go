@@ -3,39 +3,33 @@ package clients
 import (
 	"backend/dao"
 	"fmt"
-	"time"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-const (
-	tableNameUsers         = "users"
-	tableNameCourses       = "courses"
-	tableNameSubscriptions = "subscriptions"
-)
+var db *gorm.DB
 
-func main() {
-	db := map[string][]interface{}{
-		tableNameUsers: {
-			dao.User{
-				ID:           1,
-				Email:        "arnonahmias13@gmail.com",
-				PasswordHash: "5f4dcc3b5aa765d61d8327deb882cf99",
-				Type:         "admin",
-				CreationDate: time.Now().UTC(),
-				LastUpdated:  time.Now().UTC(),
-			},
-
-			dao.User{
-				ID:           2,
-				Email:        "juanperez@gmail.com",
-				PasswordHash: "5f4dcc3b5aa765d61d8327deb882cf99",
-				Type:         "normal",
-				CreationDate: time.Now().UTC(),
-			},
-		},
+func ConnectDatabase() error {
+	dsn := "root:root@tcp(localhost:3306)/coursesPlatform?charset=utf8mb4&parseTime=True&loc=Local"
+	var err error
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return fmt.Errorf("failed to connect database: %w", err)
 	}
 
-	// ... Additional user data and operations
-	users := db[tableNameUsers].([]dao.User)
-	fmt.Println("User 1:", users[0])
-	fmt.Println("User 2:", users[1]) // This will fail
+	err = db.AutoMigrate(&dao.User{}, &dao.Course{}, &dao.Subscription{})
+	if err != nil {
+		return fmt.Errorf("failed to auto-migrate: %w", err)
+	}
+
+	return nil
+}
+
+func SelectUserByID(id int64) (dao.User, error) {
+	var user dao.User
+	result := db.First(&user, id)
+	if result.Error != nil {
+		return dao.User{}, fmt.Errorf("not found user with ID: %d", id)
+	}
+	return user, nil
 }

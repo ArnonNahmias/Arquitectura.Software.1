@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/yourusername/yourproject/domain"
@@ -12,9 +13,18 @@ import (
 
 // Search busca cursos según una consulta.
 func Search(c *gin.Context) {
-	query := c.Query("q")
-	results := services.SearchCourses(query)
-	c.JSON(http.StatusOK, domain.SearchResponse{Results: results})
+	query := strings.TrimSpace(c.Query("query"))
+	results, err := services.Search(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.Result{
+			Message: fmt.Sprintf("Error in search: %s", err.Error()),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.SearchResponse{
+		Results: results,
+	})
 }
 
 // Get obtiene un curso por su ID.

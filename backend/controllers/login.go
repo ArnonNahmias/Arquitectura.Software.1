@@ -4,9 +4,8 @@ import (
 	"backend/domain"
 	"backend/services"
 	"fmt"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func Login(c *gin.Context) {
