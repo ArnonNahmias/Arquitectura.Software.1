@@ -17,7 +17,7 @@ const TopMenu = () => (
 const BrandNav = () => (
   <Navbar.Brand>
     <Logo />
-    <h2>LearnHUB</h2>
+    <h2></h2>
   </Navbar.Brand>
 );
 
