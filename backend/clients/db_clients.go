@@ -1,35 +1,26 @@
-package clients
+package main
 
 import (
-	"backend/dao"
-	"fmt"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
+	"log"
+	"os"
 )
 
-var db *gorm.DB
+var db *sql.DB
 
-func ConnectDatabase() error {
-	dsn := "root:root@tcp(localhost:3306)/coursesPlatform?charset=utf8mb4&parseTime=True&loc=Local"
+func initDB() {
 	var err error
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	dsn := os.Getenv("DB_DSN") // Utilizar variable de entorno para las credenciales
+	db, err = sql.Open("mysql", dsn)
 	if err != nil {
-		return fmt.Errorf("failed to connect database: %w", err)
+		log.Fatal("Error opening database: ", err)
 	}
 
-	err = db.AutoMigrate(&dao.User{}, &dao.Course{}, &dao.Subscription{})
+	err = db.Ping()
 	if err != nil {
-		return fmt.Errorf("failed to auto-migrate: %w", err)
+		log.Fatal("Error pinging database: ", err)
 	}
 
-	return nil
-}
-
-func SelectUserByID(id int64) (dao.User, error) {
-	var user dao.User
-	result := db.First(&user, id)
-	if result.Error != nil {
-		return dao.User{}, fmt.Errorf("not found user with ID: %d", id)
-	}
-	return user, nil
+	log.Println("Database connection established")
 }

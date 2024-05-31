@@ -1,32 +1,22 @@
-package controllers
+package main
 
 import (
-	"backend/domain"
-	"backend/services"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func Login(c *gin.Context) {
-	var request domain.LoginRequest
-
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, domain.Result{
-			Message: fmt.Sprintf("Invalid request: %s", err.Error()),
-		})
+func login(c *gin.Context) {
+	var loginDetails LoginDetails
+	if err := c.ShouldBindJSON(&loginDetails); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	token, err := services.Login(request.Email, request.Password)
+	token, err := authenticate(loginDetails)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.Result{
-			Message: fmt.Sprintf("Unauthorized login: %s", err.Error()),
-		})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
 		return
 	}
 
-	c.JSON(http.StatusOK, domain.LoginResponse{
-		Token: token,
-	})
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
