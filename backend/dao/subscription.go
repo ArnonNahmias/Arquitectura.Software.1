@@ -1,30 +1,11 @@
 package dao
 
-import (
-	"time"
-)
-
-type User struct {
-	ID           uint   `gorm:"primaryKey"`
-	Email        string `gorm:"unique"`
-	PasswordHash string
-	Type         string
-	CreationDate time.Time
-	LastUpdated  time.Time
-}
-
-type Course struct {
-	ID           uint `gorm:"primaryKey"`
-	Name         string
-	Description  string
-	CreationDate time.Time
-	LastUpdated  time.Time
-}
+import "time"
 
 type Subscription struct {
-	ID           uint `gorm:"primaryKey"`
-	UserID       uint
-	CourseID     uint
-	CreationDate time.Time
-	LastUpdated  time.Time
+	ID        uint      `json:"id" gorm:"primaryKey"`
+	UserID    uint      `json:"user_id"`
+	CourseID  uint      `json:"course_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

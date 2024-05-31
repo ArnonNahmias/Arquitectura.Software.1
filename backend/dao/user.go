@@ -3,7 +3,7 @@ package dao
 import "time"
 
 // User representa un usuario en el sistema.
-type User struct {
+type user struct {
 	ID           int64     // ID del usuario
 	EmailHash    string    // Hash del correo electrónico del usuario
 	PasswordHash string    // Hash de la contraseña del usuario
