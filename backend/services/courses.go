@@ -1,64 +1,100 @@
 package services
 
 import (
-	"backend/clients"
-	"backend/domain"
-	"fmt"
-	"strings"
+	"encoding/json"
+	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
 
-func Search(query string) ([]domain.Course, error) {
-	trimmed := strings.TrimSpace(query)
-
-	courses, err := clients.SelectCoursesWithFilter(trimmed)
-	if err != nil {
-		return nil, fmt.Errorf("error getting courses from DB: %w", err)
-	}
-
-	results := make([]domain.Course, 0)
-	for _, course := range courses {
-		results = append(results, domain.Course{
-			ID:           course.ID,
-			Title:        course.Title,
-			Description:  course.Description,
-			Category:     course.Category,
-			ImageURL:     course.ImageURL,
-			CreationDate: course.CreationDate,
-			LastUpdated:  course.LastUpdated,
-		})
-	}
-	return results, nil
+type Course struct {
+	ID          uint   `json:"id" gorm:"primaryKey"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Category    string `json:"category"`
 }
 
-func Get(id int64) (domain.Course, error) {
-	course, err := clients.SelectCourseByID(id)
-	if err != nil {
-		return domain.Course{}, fmt.Errorf("error getting course from DB: %w", err)
-	}
-
-	return domain.Course{
-		ID:           course.ID,
-		Title:        course.Title,
-		Description:  course.Description,
-		Category:     course.Category,
-		ImageURL:     course.ImageURL,
-		CreationDate: course.CreationDate,
-		LastUpdated:  course.LastUpdated,
-	}, nil
+type CourseService struct {
+	DB *gorm.DB
 }
 
-func Subscribe(userID int64, courseID int64) error {
-	if _, err := clients.SelectUserByID(userID); err != nil {
-		return fmt.Errorf("error getting user from DB: %w", err)
+func (s *CourseService) CreateCourse(w http.ResponseWriter, r *http.Request) {
+	var course Course
+	if err := json.NewDecoder(r.Body).Decode(&course); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if err := s.DB.Create(&course).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+}
+
+func (s *CourseService) GetCourse(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	if _, err := clients.SelectCourseByID(courseID); err != nil {
-		return fmt.Errorf("error getting course from DB: %w", err)
+	var course Course
+	if err := s.DB.First(&course, id).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	json.NewEncoder(w).Encode(course)
+}
+
+func (s *CourseService) ListCourses(w http.ResponseWriter, r *http.Request) {
+	var courses []Course
+	if err := s.DB.Find(&courses).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(courses)
+}
+
+func (s *CourseService) UpdateCourse(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	if err := clients.InsertSubscription(userID, courseID); err != nil {
-		return fmt.Errorf("error creating subscription in DB: %w", err)
+	var course Course
+	if err := s.DB.First(&course, id).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
 	}
 
-	return nil
+	if err := json.NewDecoder(r.Body).Decode(&course); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := s.DB.Save(&course).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+func (s *CourseService) DeleteCourse(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := s.DB.Delete(&Course{}, id).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }

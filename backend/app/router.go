@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func setupRouter() *gin.Engine {
@@ -23,4 +24,30 @@ func setupRouter() *gin.Engine {
 func main() {
 	router := setupRouter()
 	router.Run(":8080")
+}
+
+// Controladores
+func getCourses(c *gin.Context) {
+	// Implementación del controlador
+	c.JSON(http.StatusOK, gin.H{"message": "getCourses"})
+}
+
+func login(c *gin.Context) {
+	// Implementación del controlador
+	c.JSON(http.StatusOK, gin.H{"message": "login"})
+}
+
+func search(c *gin.Context) {
+	// Implementación del controlador
+	c.JSON(http.StatusOK, gin.H{"message": "search"})
+}
+
+func getUsers(c *gin.Context) {
+	// Implementación del controlador
+	c.JSON(http.StatusOK, gin.H{"message": "getUsers"})
+}
+
+func createUser(c *gin.Context) {
+	// Implementación del controlador
+	c.JSON(http.StatusOK, gin.H{"message": "createUser"})
 }

@@ -8,7 +8,9 @@ import (
 
 func main() {
 	clients.ConnectDatabase()
+
 	router := gin.New()
+
 	// Middleware to handle CORS
 	router.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
@@ -18,9 +20,11 @@ func main() {
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Next()
 	})
+
 	router.POST("/login", controllers.Login)
 	router.GET("/courses/search", controllers.Search)
 	router.GET("/courses/:id", controllers.Get)
 	router.POST("/subscriptions", controllers.Subscribe)
+
 	router.Run(":8080")
 }
