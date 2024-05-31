@@ -1,66 +1,92 @@
 import React, { useState } from 'react';
+import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import './Courses.scss';
 
-const BoxCreator = () => {
-  const [boxes, setBoxes] = useState([]);
-  const [imageURL, setImageURL] = useState('');
-  const [paragraph, setParagraph] = useState('');
+const CoursePage = () => {
+  const [courses, setCourses] = useState([]);
+  const [courseInput, setCourseInput] = useState({
+    title: '',
+    description: '',
+    imageFile: null,
+    imageUrl: ''
+  });
 
-  const addBox = () => {
-    if (!imageURL ||!paragraph) return;
-    const newBox = {
-      id: Date.now(),
-      imgSrc: imageURL,
-      desc: paragraph,
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCourseInput((prevInput) => ({ ...prevInput, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCourseInput((prevInput) => ({ ...prevInput, imageFile: file, imageUrl: reader.result }));
     };
-    setBoxes([...boxes, newBox]);
-    setImageURL('');
-    setParagraph('');
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   };
 
-  const removeBox = (id) => {
-    setBoxes(boxes.filter((box) => box.id!== id));
-  };
-
-  const handleImageURLChange = (event) => {
-    setImageURL(event.target.value);
-  };
-
-  const handleParagraphChange = (event) => {
-    setParagraph(event.target.value);
+  const handleAddCourse = () => {
+    setCourses((prevCourses) => [...prevCourses, courseInput]);
+    setCourseInput({ title: '', description: '', imageFile: null, imageUrl: '' });
   };
 
   return (
-    <div className="container">
-      <input
-        type="text"
-        value={imageURL}
-        onChange={handleImageURLChange}
-        placeholder="Enter image URL"
-      />
-      <textarea
-        value={paragraph}
-        onChange={handleParagraphChange}
-        placeholder="Enter paragraph text"
-      />
-      <button onClick={addBox}>Add Box</button>
-      <div className="boxes">
-        {boxes.map((box) => (
-          <div key={box.id} className="box">
-            <img src={box.imgSrc} alt="box image" />
-            <p>{box.desc}</p>
-            <div
-              className="remove"
-              onClick={() => removeBox(box.id)}
-            >
-              X
-            </div>
-          </div>
+    <Container className="course-page">
+      <Row>
+        <Col xs={12}>
+          <h2>Add a New Course</h2>
+          <Form>
+            <Form.Group controlId="courseTitle">
+              <Form.Label>Title</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter course title"
+                name="title"
+                value={courseInput.title}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="courseDescription">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter course description"
+                name="description"
+                value={courseInput.description}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="courseImageFile">
+              <Form.Label>Image File</Form.Label>
+              <Form.Control
+                type="file"
+                name="imageFile"
+                onChange={handleFileChange}
+              />
+            </Form.Group>
+            <Button variant="primary" onClick={handleAddCourse}>
+              Add Course
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+      <Row className="mt-4">
+        {courses.map((course, index) => (
+          <Col key={index} xs={12} md={6} lg={4} className="course-col">
+            <Card className="course-card">
+              <Card.Img variant="top" src={course.imageUrl} alt={course.title} />
+              <Card.Body>
+                <Card.Title>{course.title}</Card.Title>
+                <Card.Text>{course.description}</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
         ))}
-      </div>
-    </div>
+      </Row>
+    </Container>
   );
 };
 
-export default BoxCreator;
-
+export default CoursePage;

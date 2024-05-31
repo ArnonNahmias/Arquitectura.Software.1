@@ -1,33 +1,14 @@
-.container {
-    width: 80%;
-    margin: 0 auto;
+.course-page {
+  padding: 20px;
+
+  .course-col {
+    margin-bottom: 20px;
   }
-  
-  .boxes {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  
-  .box {
-    width: 200px;
-    height: 200px;
-    margin: 10px;
-    border: 1px solid #ccc;
-    position: relative;
-  }
-  
-  .box img {
-    width: 100%;
+
+  .course-card {
     height: 100%;
-    object-fit: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
-  
-  .remove {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: red;
-    color: white;
-    padding: 5px;
-    cursor: pointer;
-  }
+}
