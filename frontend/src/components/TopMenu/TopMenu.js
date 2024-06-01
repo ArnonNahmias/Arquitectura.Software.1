@@ -1,15 +1,14 @@
+// TopMenu.js
 import React from 'react';
-import { Container, NavLink, Navbar, Nav, Form, FormControl } from 'react-bootstrap';
+import { Container, NavLink, Navbar, Nav } from 'react-bootstrap';
 import { ReactComponent as Logo } from '../../assets/svg/LogoProvisorio.svg';
-
 import './TopMenu.scss';
 
-const TopMenu = () => (
+const TopMenu = ({ userRole, onSignOut }) => (
   <Navbar bg="dark" variant="dark" className="top-menu">
     <Container>
       <BrandNav />
-      <MenuNav />
-      {/* <SearchBar /> */}
+      <MenuNav userRole={userRole} onSignOut={onSignOut} />
     </Container>
   </Navbar>
 );
@@ -21,18 +20,11 @@ const BrandNav = () => (
   </Navbar.Brand>
 );
 
-const MenuNav = () => (
+const MenuNav = ({ userRole, onSignOut }) => (
   <Nav>
-    <NavLink href="#" className="sign-in-link">Sign out</NavLink>
-    <NavLink href="#">Mis cursos</NavLink>
+    {userRole && <NavLink href="#" onClick={onSignOut} className="sign-in-link">Sign out</NavLink>}
+    {userRole === 'commonUser' && <NavLink href="#">Mis cursos</NavLink>}
   </Nav>
 );
-
-// const SearchBar = () => (
-//   <Form inline>
-//     <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-//     <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-//   </Form>
-// );
 
 export default TopMenu;

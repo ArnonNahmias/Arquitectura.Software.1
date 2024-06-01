@@ -1,7 +1,7 @@
 // UserValidation.js
 import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
-import './UserValidation.scss';
+// import './UserValidation.scss';
 
 const UserValidation = ({ onLogin }) => {
   const [username, setUsername] = useState('');
