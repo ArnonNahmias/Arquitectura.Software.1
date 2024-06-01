@@ -1,1 +1,1 @@
-import Courses from "./Courses"
+import CoursesAdmin from "./CoursesAdmin"

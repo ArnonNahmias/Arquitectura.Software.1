@@ -9,7 +9,7 @@ const TopMenu = () => (
     <Container>
       <BrandNav />
       <MenuNav />
-      <SearchBar />
+      {/* <SearchBar /> */}
     </Container>
   </Navbar>
 );
@@ -28,11 +28,11 @@ const MenuNav = () => (
   </Nav>
 );
 
-const SearchBar = () => (
-  <Form inline>
-    <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-    <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-  </Form>
-);
+// const SearchBar = () => (
+//   <Form inline>
+//     <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+//     <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+//   </Form>
+// );
 
 export default TopMenu;

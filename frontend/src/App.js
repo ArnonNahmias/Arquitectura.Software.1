@@ -1,14 +1,16 @@
 import React from 'react';
 import TopMenu from './components/TopMenu/TopMenu';
-import Courses from './components/Courses/Courses';
+import CoursesAdmin from './components/Courses/CoursesAdmin';
 import Foot from './components/Foot/Foot';
+import UserValidation from './components/UserValidation/UserValidation';
 
 
 function App() {
   return (
     <div className="App">
       <TopMenu />
-      <Courses />
+      <UserValidation />
+      <CoursesAdmin />
       <Foot />
     </div>
   );
