@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+// src/components/CoursesAdmin.js
+import React, { useState, useContext } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import { CourseContext } from '../../contexts/CourseContext';
 import './CoursesAdmin.scss';
 
 const CoursePage = () => {
-  const [courses, setCourses] = useState([]);
+  const { courses, addCourse, deleteCourse } = useContext(CourseContext);
   const [courseInput, setCourseInput] = useState({
     title: '',
     description: '',
@@ -33,14 +35,10 @@ const CoursePage = () => {
 
   const handleAddCourse = () => {
     setIsLoading(true);
-    setCourses((prevCourses) => [...prevCourses, { ...courseInput, price: courseInput.price || '0' }]);
+    addCourse({ ...courseInput, price: courseInput.price || '0' });
     setCourseInput({ title: '', description: '', price: '', imageFile: null, imageUrl: '' });
     setMessage({ type: 'success', text: 'Course added successfully!' });
     setIsLoading(false);
-  };
-
-  const handleDeleteCourse = (index) => {
-    setCourses((prevCourses) => prevCourses.filter((_, i) => i !== index));
   };
 
   const handleSearchChange = (e) => {
@@ -123,7 +121,7 @@ const CoursePage = () => {
                 <Card.Title>{course.title || 'No Title'}</Card.Title>
                 <Card.Text>{course.description || 'No Description'}</Card.Text>
                 <Card.Text><strong>Price:</strong> ${course.price}</Card.Text>
-                <Button variant="danger" onClick={() => handleDeleteCourse(index)}>Delete</Button>
+                <Button variant="danger" onClick={() => deleteCourse(index)}>Delete</Button>
               </Card.Body>
             </Card>
           </Col>

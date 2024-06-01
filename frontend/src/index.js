@@ -1,3 +1,4 @@
+// src/index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -5,13 +6,14 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
-
-
+import { CourseProvider } from './contexts/CourseContext'; // Importa el CourseProvider
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <CourseProvider>  {/* Envuelve el App con CourseProvider */}
+      <App />
+    </CourseProvider>
   </React.StrictMode>
 );
 

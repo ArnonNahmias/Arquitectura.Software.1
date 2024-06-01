@@ -1,55 +1,60 @@
-// UserValidation.js
-import React, { useState } from 'react';
-import { Container, Form, Button, Alert } from 'react-bootstrap';
-// import './UserValidation.scss';
+// src/components/CommonUserView.js
+import React, { useContext, useState } from 'react';
+import { Container, Row, Col, Card, Button, Alert, Form } from 'react-bootstrap';
+import { CourseContext } from '../../contexts/CourseContext';
+import './CommonUserView.scss';
 
-const UserValidation = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+const CommonUserView = () => {
+  const { courses, enrolledCourses, enrollCourse } = useContext(CourseContext);
   const [message, setMessage] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // Dummy authentication logic
-    if (username === 'admin' && password === 'admin') {
-      setMessage({ type: 'success', text: 'Login successful!' });
-      onLogin('admin');
-    } else if (username === 'user' && password === 'user') {
-      setMessage({ type: 'success', text: 'Login successful!' });
-      onLogin('commonUser');
+  const handleEnroll = (course) => {
+    if (enrolledCourses.some(c => c.title === course.title)) {
+      setMessage(`Ya estás inscrito en el curso: ${course.title}`);
     } else {
-      setMessage({ type: 'danger', text: 'Invalid username or password' });
+      enrollCourse(course);
+      setMessage(`Felicitaciones por inscribirte al curso: ${course.title}`);
     }
+    setTimeout(() => setMessage(null), 3000); // Clear message after 3 seconds
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredCourses = courses.filter(course =>
+    course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <Container className="user-validation">
-      <div className="login-form">
-        {message && <Alert variant={message.type}>{message.text}</Alert>}
-        <Form onSubmit={handleLogin}>
-          <Form.Group controlId="formUsername">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="formPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Form.Group>
-          <Button variant="primary" type="submit">Login</Button>
-        </Form>
-      </div>
+    <Container className="common-user-view">
+      {message && <Alert variant="success">{message}</Alert>}
+      <Form.Control
+        type="text"
+        placeholder="Buscar cursos"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        className="mb-4"
+      />
+      <Row>
+        {filteredCourses.map((course, index) => (
+          <Col key={index} xs={12} md={6} lg={4} className="course-col">
+            <Card className="course-card">
+              {course.imageUrl && <Card.Img variant="top" src={course.imageUrl} alt={course.title} />}
+              <Card.Body>
+                <Card.Title>{course.title || 'No Title'}</Card.Title>
+                <Card.Text>{course.description || 'No Description'}</Card.Text>
+                <Card.Text><strong>Price:</strong> ${course.price}</Card.Text>
+                <Button variant="primary" onClick={() => handleEnroll(course)}>Inscribirse</Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </Container>
   );
 };
 
-export default UserValidation;
+export default CommonUserView;
