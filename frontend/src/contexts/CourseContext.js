@@ -12,7 +12,9 @@ export const CourseProvider = ({ children }) => {
   };
 
   const deleteCourse = (index) => {
+    const courseToDelete = courses[index];
     setCourses(courses.filter((_, i) => i !== index));
+    setEnrolledCourses(enrolledCourses.filter(c => c.title !== courseToDelete.title));
   };
 
   const enrollCourse = (course) => {

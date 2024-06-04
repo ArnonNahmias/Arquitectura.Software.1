@@ -1,5 +1,6 @@
-// UserValidation.js
+// src/components/UserValidation/UserValidation.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import './UserValidation.scss';
 
@@ -7,6 +8,7 @@ const UserValidation = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState(null);
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -14,9 +16,11 @@ const UserValidation = ({ onLogin }) => {
     if (username === 'admin' && password === 'admin') {
       setMessage({ type: 'success', text: 'Login successful!' });
       onLogin('admin');
+      navigate('/');
     } else if (username === 'user' && password === 'user') {
       setMessage({ type: 'success', text: 'Login successful!' });
       onLogin('commonUser');
+      navigate('/');
     } else {
       setMessage({ type: 'danger', text: 'Invalid username or password' });
     }

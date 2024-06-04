@@ -1,5 +1,6 @@
-// src/components/TopMenu.js
+// src/components/TopMenu/TopMenu.js
 import React, { useContext, useState } from 'react';
+import { LinkContainer } from 'react-router-bootstrap';
 import { Container, NavLink, Navbar, Nav, Modal, Button, Row, Col, Card, Alert } from 'react-bootstrap';
 import { CourseContext } from '../../contexts/CourseContext';
 import { ReactComponent as Logo } from '../../assets/svg/LogoProvisorio.svg';
@@ -73,8 +74,21 @@ const BrandNav = () => (
 
 const MenuNav = ({ userRole, onSignOut, onShowEnrolled }) => (
   <Nav>
+    <LinkContainer to="/">
+      <NavLink>Home</NavLink>
+    </LinkContainer>
+    {userRole === 'admin' && (
+      <LinkContainer to="/admin">
+        <NavLink>Manage Courses</NavLink>
+      </LinkContainer>
+    )}
     {userRole && <NavLink href="#" onClick={onSignOut} className="sign-in-link">Cerrar sesión</NavLink>}
     {userRole === 'commonUser' && <NavLink href="#" onClick={onShowEnrolled}>Mis cursos</NavLink>}
+    {!userRole && (
+      <LinkContainer to="/login">
+        <NavLink>Login</NavLink>
+      </LinkContainer>
+    )}
   </Nav>
 );
 

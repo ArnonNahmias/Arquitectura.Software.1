@@ -4,7 +4,7 @@ import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap'
 import { CourseContext } from '../../contexts/CourseContext';
 import './CoursesAdmin.scss';
 
-const CoursePage = () => {
+const CoursesAdmin = () => {
   const { courses, addCourse, deleteCourse } = useContext(CourseContext);
   const [courseInput, setCourseInput] = useState({
     title: '',
@@ -19,6 +19,13 @@ const CoursePage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'price') {
+      const validPrice = /^\d*\.?\d{0,2}$/.test(value);
+      if (!validPrice) {
+        setMessage({ type: 'danger', text: 'Please enter a valid price.' });
+        return;
+      }
+    }
     setCourseInput((prevInput) => ({ ...prevInput, [name]: value }));
   };
 
@@ -35,7 +42,7 @@ const CoursePage = () => {
 
   const handleAddCourse = () => {
     setIsLoading(true);
-    addCourse({ ...courseInput, price: courseInput.price || '0' });
+    addCourse({ ...courseInput, price: parseFloat(courseInput.price) || 0 });
     setCourseInput({ title: '', description: '', price: '', imageFile: null, imageUrl: '' });
     setMessage({ type: 'success', text: 'Course added successfully!' });
     setIsLoading(false);
@@ -81,6 +88,7 @@ const CoursePage = () => {
               <Form.Label>Price ($)</Form.Label>
               <Form.Control
                 type="number"
+                step="0.01"
                 placeholder="Enter course price"
                 name="price"
                 value={courseInput.price}
@@ -131,4 +139,4 @@ const CoursePage = () => {
   );
 };
 
-export default CoursePage;
+export default CoursesAdmin;

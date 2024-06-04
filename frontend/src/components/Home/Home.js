@@ -1,20 +1,30 @@
-// src/components/CommonUserView.js
+// src/components/Home.js
 import React, { useContext, useState } from 'react';
 import { Container, Row, Col, Card, Button, Alert, Form } from 'react-bootstrap';
 import { CourseContext } from '../../contexts/CourseContext';
-import './CommonUserView.scss';
+import { useNavigate } from 'react-router-dom';
+import './Home.scss';
 
-const CommonUserView = () => {
+const CommonUserView = ({ userRole }) => {
   const { courses, enrolledCourses, enrollCourse } = useContext(CourseContext);
   const [message, setMessage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const handleEnroll = (course) => {
+    if (userRole !== 'commonUser') {
+      setMessage('You must be logged in as a common user to subscribe to courses.');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500); // Redirect after showing the message for 1.5 seconds
+      return;
+    }
+
     if (enrolledCourses.some(c => c.title === course.title)) {
-      setMessage(`Ya estás inscrito en el curso: ${course.title}`);
+      setMessage(`You are already enrolled in the course: ${course.title}`);
     } else {
       enrollCourse(course);
-      setMessage(`Felicitaciones por inscribirte al curso: ${course.title}`);
+      setMessage(`Congratulations on enrolling in the course: ${course.title}`);
     }
     setTimeout(() => setMessage(null), 3000); // Clear message after 3 seconds
   };
@@ -33,7 +43,7 @@ const CommonUserView = () => {
       {message && <Alert variant="success">{message}</Alert>}
       <Form.Control
         type="text"
-        placeholder="Buscar cursos"
+        placeholder="Search courses"
         value={searchTerm}
         onChange={handleSearchChange}
         className="mb-4"
@@ -47,7 +57,7 @@ const CommonUserView = () => {
                 <Card.Title>{course.title || 'No Title'}</Card.Title>
                 <Card.Text>{course.description || 'No Description'}</Card.Text>
                 <Card.Text><strong>Price:</strong> ${course.price}</Card.Text>
-                <Button variant="primary" onClick={() => handleEnroll(course)}>Inscribirse</Button>
+                <Button variant="primary" onClick={() => handleEnroll(course)}>Enroll</Button>
               </Card.Body>
             </Card>
           </Col>
