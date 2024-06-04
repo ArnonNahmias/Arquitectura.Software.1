@@ -1,11 +1,13 @@
 package dao
 
-import "time"
+import (
+	"time"
+)
 
 type Subscription struct {
-	ID        uint      `json:"id" gorm:"primaryKey"`
-	UserID    uint      `json:"user_id"`
-	CourseID  uint      `json:"course_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID           uint      `gorm:"primaryKey;column:Id_subscription;autoIncrement"`
+	UserID       uint      `gorm:"column:User_id;not null"`
+	CourseID     uint      `gorm:"column:Course_id;not null"`
+	CreationDate time.Time `gorm:"column:Creation_date;autoCreateTime"`
+	LastUpdated  time.Time `gorm:"column:Last_updated;autoUpdateTime"`
 }

@@ -1,13 +1,13 @@
 package dao
 
-import "time"
+import (
+	"time"
+)
 
-// User representa un usuario en el sistema.
-type user struct {
-	ID           int64     // ID del usuario
-	EmailHash    string    // Hash del correo electrónico del usuario
-	PasswordHash string    // Hash de la contraseña del usuario
-	Type         string    // Tipo de usuario (admin o normal)
-	CreationDate time.Time // Fecha de creación del usuario
-	LastUpdated  time.Time // Fecha de última actualización del usuario
+type Usuario struct {
+	IdUsuario     int       `gorm:"primaryKey;column:Id_usuario;autoIncrement"`
+	NombreUsuario string    `gorm:"column:Nombre_usuario;not null;unique"`
+	Contrasena    string    `gorm:"column:Contrasena;not null"`
+	CreatedAt     time.Time `gorm:"column:Created_at;autoCreateTime"`
+	UpdatedAt     time.Time `gorm:"column:Updated_at;autoUpdateTime"`
 }

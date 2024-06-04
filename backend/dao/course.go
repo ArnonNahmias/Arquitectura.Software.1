@@ -1,12 +1,15 @@
 package dao
 
-import "time"
+import (
+	"time"
+)
 
-type Course struct {
-	ID          uint      `json:"id" gorm:"primaryKey"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Category    string    `json:"category"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+type Curso struct {
+	IdCurso    int       `gorm:"primaryKey;column:Id_curso;autoIncrement"`
+	Nombre     string    `gorm:"column:Nombre;not null"`
+	Dificultad string    `gorm:"column:Dificultad;not null"`
+	Precio     int       `gorm:"column:Precio;not null"`
+	Direccion  string    `gorm:"column:Direccion"`
+	CreatedAt  time.Time `gorm:"column:Created_at;autoCreateTime"`
+	UpdatedAt  time.Time `gorm:"column:Updated_at;autoUpdateTime"`
 }
