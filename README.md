@@ -10,10 +10,7 @@
 
 ## Autor
 
-**Joaquín Lista**  
-**Felipe Ganame**
-**Justina Antonucci**
-**Arnon Nahmias**
+**Joaquín Lista**  **Felipe Ganame****Justina Antonucci****Arnon Nahmias**
 
 ## Descripción
 
@@ -30,7 +27,8 @@
 ### Tecnologías Usadas
 
 - **REACT**
-- **CSS3**
+- **MySQL**
+- **GOLANG**
 
 ### Estructura
 
