@@ -1,11 +1,11 @@
-package main
+package router
 
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func setupRouter() *gin.Engine {
+func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
 	// Middlewares
@@ -19,11 +19,6 @@ func setupRouter() *gin.Engine {
 	router.POST("/users", createUser)
 
 	return router
-}
-
-func main() {
-	router := setupRouter()
-	router.Run(":8080")
 }
 
 // Controladores
