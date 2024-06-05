@@ -103,7 +103,7 @@ func Login(email string, password string) (string, error) {
 		return "", fmt.Errorf("error getting user from DB: %w", err)
 	}
 
-	if hash != userDAO.PasswordHash {
+	if hash != userDAO.Password {
 		return "", fmt.Errorf("invalid credentials")
 	}
 
