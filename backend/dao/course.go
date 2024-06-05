@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Curso struct {
+type Course struct {
 	IdCurso    int       `gorm:"primaryKey;column:Id_curso;autoIncrement"`
 	Nombre     string    `gorm:"column:Nombre;not null"`
 	Dificultad string    `gorm:"column:Dificultad;not null"`

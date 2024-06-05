@@ -1,11 +1,12 @@
 package services
 
 import (
-	"encoding/json"
-	"net/http"
+	"backend/clients"
+	"backend/domain"
+	"fmt"
 	"strconv"
+	"strings"
 
-	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
@@ -20,81 +21,41 @@ type CourseService struct {
 	DB *gorm.DB
 }
 
-func (s *CourseService) CreateCourse(w http.ResponseWriter, r *http.Request) {
-	var course Course
-	if err := json.NewDecoder(r.Body).Decode(&course); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if err := s.DB.Create(&course).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusCreated)
-}
+func Search(query string) ([]domain.Course, error) {
+	trimmed := strings.TrimSpace(query)
 
-func (s *CourseService) GetCourse(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	courses, err := clients.SelectCoursesWithFilter(trimmed)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return nil, fmt.Errorf("error getting courses from DB: %w", err)
 	}
 
-	var course Course
-	if err := s.DB.First(&course, id).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
+	results := make([]domain.Course, 0)
+	for _, course := range courses {
+		results = append(results, domain.Course{
+			IdCurso:    int64(course.IdCurso), // Convert int to int64
+			Nombre:     course.Nombre,
+			Dificultad: course.Dificultad,
+			Precio:     strconv.Itoa(course.Precio), // Convert int to string
+			Direccion:  course.Direccion,
+			CreatedAt:  course.CreatedAt,
+			UpdatedAt:  course.UpdatedAt,
+		})
 	}
-	json.NewEncoder(w).Encode(course)
+	return results, nil
 }
 
-func (s *CourseService) ListCourses(w http.ResponseWriter, r *http.Request) {
-	var courses []Course
-	if err := s.DB.Find(&courses).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	json.NewEncoder(w).Encode(courses)
-}
-
-func (s *CourseService) UpdateCourse(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+func Subscribe(userID int64, courseID int64) error {
+	if _, err := clients.SelectUserByID(userID); err != nil {
+		return fmt.Errorf("error getting user from DB: %w", err)
 	}
 
-	var course Course
-	if err := s.DB.First(&course, id).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
+	if _, err := clients.SelectCourseByID(courseID); err != nil {
+		return fmt.Errorf("error getting course from DB: %w", err)
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&course); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	if err := clients.InsertSubscription(userID, courseID); err != nil {
+		return fmt.Errorf("error creating subscription in DB: %w", err)
 	}
 
-	if err := s.DB.Save(&course).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-}
-
-func (s *CourseService) DeleteCourse(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := s.DB.Delete(&Course{}, id).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusNoContent)
+	return nil
 }

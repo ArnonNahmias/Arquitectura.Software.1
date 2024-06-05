@@ -1,15 +1,10 @@
 package domain
 
 import (
-	"crypto/md5"
-	"database/sql"
-	"encoding/hex"
-	"fmt"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 )
 
-func hashMD5(password string) string {
+/*func hashMD5(password string) string {
 	hash := md5.New()
 	hash.Write([]byte(password))
 	return hex.EncodeToString(hash.Sum(nil))
@@ -39,4 +34,13 @@ func main() {
 	} else {
 		fmt.Println("Contraseña incorrecta")
 	}
+*/
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	Token string `json:"token"`
 }
