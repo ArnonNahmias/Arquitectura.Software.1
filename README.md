@@ -10,7 +10,10 @@
 
 ## Autor
 
-**Joaquín Lista**  **Felipe Ganame****Justina Antonucci****Arnon Nahmias**
+-**Joaquín Lista**
+-**Felipe Ganame**
+-**Justina Antonucci**
+-**Arnon Nahmias**
 
 ## Descripción
 
@@ -29,6 +32,7 @@
 - **REACT**
 - **MySQL**
 - **GOLANG**
+
 
 ### Estructura
 
