@@ -14,7 +14,7 @@
 - **Felipe Ganame**
 - **Justina Antonucci**
 - **Arnon Nahmias**
-- **Fran Ruibal**
+- **Francisco Ruibal**
 
 
 ## Descripción
