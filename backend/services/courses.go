@@ -10,12 +10,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type Course struct {
+/*type Course struct {
 	ID          uint   `json:"id" gorm:"primaryKey"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Category    string `json:"category"`
-}
+}*/
 
 type CourseService struct {
 	DB *gorm.DB
@@ -44,7 +44,7 @@ func Search(query string) ([]domain.Course, error) {
 	return results, nil
 }
 
-func Subscribe(userID int64, courseID int64) error {
+/*func Subscribe(userID int64, courseID int64) error {
 	if _, err := clients.SelectUserByID(userID); err != nil {
 		return fmt.Errorf("error getting user from DB: %w", err)
 	}
@@ -59,3 +59,4 @@ func Subscribe(userID int64, courseID int64) error {
 
 	return nil
 }
+*/

@@ -2,16 +2,17 @@ package clients
 
 import (
 	"backend/dao"
+	"log"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
 )
 
 var DB *gorm.DB
 
 func InitDB() {
 	log.Println("Initializing database...")
-	dsn := "root:admin@tcp(127.0.0.1:3306)/proyecto?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:DeanF9360@tcp(127.0.0.1:3306)/proyecto?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -42,4 +43,13 @@ func SeedDB() {
 		DB.Create(&curso)
 	}
 	log.Println("Database seeded successfully")
+}
+
+func SelectCoursesWithFilter(query string) ([]dao.Course, error) {
+	var courses []dao.Course
+	result := DB.Where("Nombre LIKE ? ", "%"+query+"%").Find(&courses)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return courses, nil
 }

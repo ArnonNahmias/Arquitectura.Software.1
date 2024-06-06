@@ -1,8 +1,10 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
+	"backend/controllers"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func SetupRouter() *gin.Engine {
@@ -14,7 +16,7 @@ func SetupRouter() *gin.Engine {
 	// Rutas y controladores
 	router.GET("/courses", getCourses)
 	router.POST("/login", login)
-	router.GET("/search", search)
+	router.GET("/search", controllers.Search)
 	router.GET("/users", getUsers)
 	router.POST("/users", createUser)
 
@@ -30,11 +32,6 @@ func getCourses(c *gin.Context) {
 func login(c *gin.Context) {
 	// Implementación del controlador
 	c.JSON(http.StatusOK, gin.H{"message": "login"})
-}
-
-func search(c *gin.Context) {
-	// Implementación del controlador
-	c.JSON(http.StatusOK, gin.H{"message": "search"})
 }
 
 func getUsers(c *gin.Context) {

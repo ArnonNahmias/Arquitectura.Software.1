@@ -1,11 +1,6 @@
 package services
 
 import (
-	"backend/clients"
-	"crypto/md5"
-	"errors"
-	"fmt"
-	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -87,7 +82,7 @@ func generateJWT(email string) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
-func Login(email string, password string) (string, error) {
+/*func Login(email string, password string) (string, error) {
 	if strings.TrimSpace(email) == "" {
 		return "", errors.New("email is required")
 	}
@@ -115,3 +110,4 @@ func Login(email string, password string) (string, error) {
 
 	return token, nil
 }
+*/
