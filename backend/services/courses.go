@@ -36,7 +36,7 @@ func Search(query string) ([]domain.Course, error) {
 			Nombre:     course.Nombre,
 			Dificultad: course.Dificultad,
 			Precio:     strconv.Itoa(course.Precio), // Convert int to string
-			Direccion:  course.Direccion,
+			ImageURL:   course.ImageURL,
 			CreatedAt:  course.CreatedAt,
 			UpdatedAt:  course.UpdatedAt,
 		})

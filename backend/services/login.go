@@ -1,26 +1,70 @@
 package services
 
 import (
-	"time"
-
+	"backend/clients"
+	"crypto/md5"
+	"encoding/hex"
+	"errors"
 	"github.com/golang-jwt/jwt/v5"
+	"time"
 )
+
+func Login(username string, password string) (string, error) {
+	user, err := clients.SelectUser(username)
+	if err != nil {
+		return "", err
+	}
+
+	passwordHash := hashMD5(password)
+	if username != user.NombreUsuario || passwordHash != user.Contrasena {
+		return "", errors.New("invalid credentials")
+	}
+
+	token, err := generateJWT(username)
+	if err != nil {
+		return "", errors.New("error generating token")
+	}
+
+	return token, nil
+}
+
+func hashMD5(password string) string {
+	hash := md5.New()
+	hash.Write([]byte(password))
+	return hex.EncodeToString(hash.Sum(nil))
+}
+
+var jwtSecret = []byte("your_secret_key") // Replace with your actual secret key
+
+func generateJWT(username string) (string, error) {
+	// Create the claims
+	claims := jwt.MapClaims{
+		"username": username,
+		"exp":      time.Now().Add(time.Hour * 72).Unix(), // Token expiry time (72 hours)
+	}
+
+	// Create the token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Sign the token with the secret key
+	return token.SignedString(jwtSecret)
+}
 
 /*var jwtKey = []byte("my_secret_key")
 
 type Credentials struct {
 	Password string `json:"password"`
-	Email    string `json:"email"`
+	Username    string `json:"email"`
 }
 
 type Claims struct {
-	Email string `json:"email"`
+	Username string `json:"email"`
 	jwt.RegisteredClaims
 }
 
 type User struct {
 	ID       uint   `json:"id" gorm:"primaryKey"`
-	Email    string `json:"email"`
+	Username    string `json:"email"`
 	Password string `json:"-"`
 }
 
@@ -36,7 +80,7 @@ func (s *LoginService) Login(c *gin.Context) {
 	}
 
 	var user User
-	if err := s.DB.Where("email = ?", creds.Email).First(&user).Error; err != nil {
+	if err := s.DB.Where("email = ?", creds.Username).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
 		return
 	}
@@ -48,7 +92,7 @@ func (s *LoginService) Login(c *gin.Context) {
 
 	expirationTime := jwt.NewNumericDate(time.Now().Add(5 * time.Minute))
 	claims := &Claims{
-		Email: creds.Email,
+		Username: creds.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: expirationTime,
 		},
@@ -65,22 +109,6 @@ func (s *LoginService) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": tokenString})
 }
 */
-
-var jwtSecret = []byte("your_secret_key") // Replace with your actual secret key
-
-func generateJWT(email string) (string, error) {
-	// Create the claims
-	claims := jwt.MapClaims{
-		"email": email,
-		"exp":   time.Now().Add(time.Hour * 72).Unix(), // Token expiry time (72 hours)
-	}
-
-	// Create the token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	// Sign the token with the secret key
-	return token.SignedString(jwtSecret)
-}
 
 /*func Login(email string, password string) (string, error) {
 	if strings.TrimSpace(email) == "" {

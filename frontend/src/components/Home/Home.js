@@ -1,5 +1,5 @@
 // src/components/Home.js
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button, Alert, Form } from 'react-bootstrap';
 import { CourseContext } from '../../contexts/CourseContext';
 import { useNavigate } from 'react-router-dom';
@@ -7,9 +7,19 @@ import './Home.scss';
 
 const CommonUserView = ({ userRole }) => {
   const { courses, enrolledCourses, enrollCourse } = useContext(CourseContext);
+  const [cursos, setCursos] = useState([]);
   const [message, setMessage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(`Fetching data from http://localhost:8080/search?query=${searchTerm}`)
+    // Fetch data from the API based on the search term
+    fetch(`http://localhost:8080/search?query=${searchTerm}`)
+      .then(response => response.json())
+      .then(data => setCursos(data.results))
+      .catch(error => console.error('Error fetching courses:', error));
+  }, [searchTerm]);
 
   const handleEnroll = (course) => {
     if (userRole !== 'commonUser') {
@@ -49,14 +59,14 @@ const CommonUserView = ({ userRole }) => {
         className="mb-4"
       />
       <Row>
-        {filteredCourses.map((course, index) => (
+        {cursos.map((course, index) => (
           <Col key={index} xs={12} md={6} lg={4} className="course-col">
             <Card className="course-card">
               {course.imageUrl && <Card.Img variant="top" src={course.imageUrl} alt={course.title} />}
               <Card.Body>
                 <Card.Title>{course.title || 'No Title'}</Card.Title>
                 <Card.Text>{course.description || 'No Description'}</Card.Text>
-                <Card.Text><strong>Price:</strong> ${course.price}</Card.Text>
+                <img src={course.image_url} />
                 <Button variant="primary" onClick={() => handleEnroll(course)}>Enroll</Button>
               </Card.Body>
             </Card>

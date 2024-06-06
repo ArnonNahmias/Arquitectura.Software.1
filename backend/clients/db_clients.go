@@ -12,7 +12,7 @@ var DB *gorm.DB
 
 func InitDB() {
 	log.Println("Initializing database...")
-	dsn := "root:DeanF9360@tcp(127.0.0.1:3306)/proyecto?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(127.0.0.1:3306)/proyecto?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -36,13 +36,21 @@ func Migrate() {
 func SeedDB() {
 	log.Println("Seeding database...")
 	cursos := []dao.Course{
-		{Nombre: "Ingles B2", Dificultad: "Medio", Precio: 45, Direccion: "José Roque Funes 1511 X5000ABE Córdoba"},
-		{Nombre: "Hacking Etico", Dificultad: "Dificil", Precio: 60, Direccion: "Paseo de la Reforma 505, CDMX"},
+		{Nombre: "Ingles B2", Dificultad: "Medio", Precio: 45, Direccion: "José Roque Funes 1511 X5000ABE Córdoba", ImageURL: "https://blog.hubspot.com/hs-fs/hubfs/freeonlinecourses-1.webp?width=595&height=400&name=freeonlinecourses-1.webp"},
 	}
 	for _, curso := range cursos {
 		DB.Create(&curso)
 	}
 	log.Println("Database seeded successfully")
+}
+
+func SelectUser(username string) (dao.Usuario, error) {
+	var user dao.Usuario
+	result := DB.Where("Nombre_usuario = ?", username).Find(&user)
+	if result.Error != nil {
+		return dao.Usuario{}, result.Error
+	}
+	return user, nil
 }
 
 func SelectCoursesWithFilter(query string) ([]dao.Course, error) {
