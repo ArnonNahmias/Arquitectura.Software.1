@@ -12,7 +12,7 @@ var DB *gorm.DB
 
 func InitDB() {
 	log.Println("Initializing database...")
-	dsn := "root:root@tcp(127.0.0.1:3306)/proyecto?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:admin@tcp(127.0.0.1:3306)/proyecto?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -53,7 +53,7 @@ func SelectUser(username string) (dao.Usuario, error) {
 	return user, nil
 }
 
-func SelectCoursesWithFilter(query string) ([]dao.Course, error) {
+func SelectCoursesWithFilterName(query string) ([]dao.Course, error) {
 	var courses []dao.Course
 	result := DB.Where("Nombre LIKE ? ", "%"+query+"%").Find(&courses)
 	if result.Error != nil {
@@ -61,3 +61,14 @@ func SelectCoursesWithFilter(query string) ([]dao.Course, error) {
 	}
 	return courses, nil
 }
+func SelectCoursesWithFilterID(query int) ([]dao.Course, error) {
+	var courses []dao.Course
+	// Asegúrate de que el nombre de la columna en la cláusula WHERE sea correcto
+	result := DB.Where("Id_Curso = ?", query).Find(&courses)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return courses, nil
+}
+
+

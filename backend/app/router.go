@@ -16,7 +16,7 @@ func SetupRouter() *gin.Engine {
 	// Rutas y controladores
 	router.Use(allowCORS)
 	router.GET("/courses", getCourses)
-	router.GET("/courses/:id", controllers.GetCourseByID)
+	router.POST("/courses/:id", controllers.SearchbyID)
 	router.POST("/login", controllers.Login)
 	router.GET("/search", controllers.Search)
 	router.GET("/users", getUsers)
