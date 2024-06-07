@@ -18,7 +18,7 @@ func SetupRouter() *gin.Engine {
 	router.GET("/courses", getCourses)
 	router.POST("/courses/:id", controllers.SearchbyID)
 	router.POST("/login", controllers.Login)
-	router.GET("/search", controllers.Search)
+	router.GET("/search?query=", controllers.Search)
 	router.GET("/users", getUsers)
 	router.POST("/users", createUser)
 
