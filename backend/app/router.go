@@ -2,8 +2,6 @@ package router
 
 import (
 	"backend/controllers"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,16 +9,18 @@ func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
 	// Middlewares
-	// router.Use(someMiddleware)
+	router.Use(allowCORS)
 
 	// Rutas y controladores
-	router.Use(allowCORS)
-	router.GET("/courses", getCourses)
-	router.POST("/courses/:id", controllers.SearchbyID)
+	router.GET("/courses", controllers.GetCourses)
+	router.POST("/courses", controllers.CreateCourse)
+	router.DELETE("/courses/:id", controllers.DeleteCourse)
 	router.POST("/login", controllers.Login)
-	router.GET("/search?query=", controllers.Search)
-	router.GET("/users", getUsers)
-	router.POST("/users", createUser)
+	router.GET("/subscriptions", controllers.GetSubscriptions)
+	router.POST("/subscriptions", controllers.CreateSubscription)
+	router.DELETE("/subscriptions/:id", controllers.DeleteSubscription)
+	router.GET("/search", controllers.Search)
+	router.GET("/search/:id", controllers.SearchByID)
 
 	return router
 }
@@ -31,21 +31,9 @@ func allowCORS(c *gin.Context) {
 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
 	c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	if c.Request.Method == "OPTIONS" {
+		c.AbortWithStatus(204)
+		return
+	}
 	c.Next()
-}
-
-// Controladores
-func getCourses(c *gin.Context) {
-	// Implementación del controlador
-	c.JSON(http.StatusOK, gin.H{"message": "getCourses"})
-}
-
-func getUsers(c *gin.Context) {
-	// Implementación del controlador
-	c.JSON(http.StatusOK, gin.H{"message": "getUsers"})
-}
-
-func createUser(c *gin.Context) {
-	// Implementación del controlador
-	c.JSON(http.StatusOK, gin.H{"message": "createUser"})
 }
