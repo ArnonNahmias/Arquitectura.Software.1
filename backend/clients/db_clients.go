@@ -36,8 +36,8 @@ func Migrate() {
 func SeedDB() {
 	log.Println("Seeding database...")
 	cursos := []dao.Course{
-		{Nombre: "Ingles B2", Dificultad: "Medio", Precio: 45, Direccion: "José Roque Funes 1511 X5000ABE Córdoba"},
-		{Nombre: "Hacking Etico", Dificultad: "Dificil", Precio: 60, Direccion: "Paseo de la Reforma 505, CDMX"},
+		{Nombre: "Ingles B2", Dificultad: "Medio", Precio: 45, Direccion: "José Roque Funes 1511 X5000ABE Córdoba", ImageURL: "https://diarium.usal.es/ireneigls/files/2018/09/b2-de-ingles.jpg"},
+		{Nombre: "Hacking Etico", Dificultad: "Dificil", Precio: 60, Direccion: "Paseo de la Reforma 505, CDMX", ImageURL: "https://www.pmg-ssi.com/wp-content/uploads/2023/08/he.jpg"},
 	}
 	for _, curso := range cursos {
 		DB.Create(&curso)
