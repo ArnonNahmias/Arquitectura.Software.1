@@ -50,7 +50,7 @@ const HomePage = () => {
             <Card>
               <CardMedia
                 component="img"
-                height="450"
+                height="auto" // esto es para acomodar el tamanio de las imagenes
                 image={course.imageURL} // Utiliza la URL de la imagen del curso
                 alt={course.nombre}
               />

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://localhost:8080'; // Asegúrate de que esta URL sea correcta
 
 export const fetchCourses = async () => {
   try {
@@ -12,9 +12,9 @@ export const fetchCourses = async () => {
   }
 };
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (username, password) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, { email, password });
+    const response = await axios.post(`${API_URL}/login`, { username, password });
     return response.data;
   } catch (error) {
     console.error('Error logging in', error);
@@ -22,9 +22,9 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const registerUser = async (email, password) => {
+export const registerUser = async (username, password) => {
   try {
-    const response = await axios.post(`${API_URL}/register`, { email, password });
+    const response = await axios.post(`${API_URL}/register`, { username, password });
     return response.data;
   } catch (error) {
     console.error('Error registering', error);
