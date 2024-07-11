@@ -1,7 +1,8 @@
-// services/login.go
 package services
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"time"
@@ -10,7 +11,6 @@ import (
 	"backend/dao"
 
 	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -36,11 +36,22 @@ func GenerateJWT(username string, userID int) (string, error) {
 	return token.SignedString(jwtKey)
 }
 
+func md5Hash(password string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(password))
+	return hex.EncodeToString(hasher.Sum(nil))
+}
+
 func Login(username, password string) (string, int, string, error) {
 	fmt.Println("Username:", username) // Depuración
-	fmt.Println("Password:", password) // Depuración
+
+	// Hashear la contraseña recibida del frontend usando MD5
+	hashedPassword := md5Hash(password)
+
+	fmt.Println("Hashed Password from Frontend (MD5):", hashedPassword) // Depuración
 
 	var user dao.Usuario
+	// Buscar usuario por nombre de usuario
 	if err := clients.DB.Where("nombre_usuario = ?", username).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			fmt.Println("User not found") // Depuración
@@ -52,12 +63,13 @@ func Login(username, password string) (string, int, string, error) {
 	fmt.Println("User found:", user.NombreUsuario) // Depuración
 	fmt.Println("Hashed Password in DB:", user.Contrasena) // Depuración
 
-	err := bcrypt.CompareHashAndPassword([]byte(user.Contrasena), []byte(password))
-	if err != nil {
+	// Comparar la contraseña hasheada del frontend (MD5) con la almacenada en la base de datos
+	if user.Contrasena != hashedPassword {
 		fmt.Println("Invalid password") // Depuración
 		return "", 0, "", errors.New("invalid credentials")
 	}
 
+	// Generar token JWT si la contraseña es correcta
 	token, err := GenerateJWT(username, user.IdUsuario)
 	if err != nil {
 		return "", 0, "", err
