@@ -7,14 +7,14 @@ import (
 )
 
 type Course struct {
-	ID          uint      `gorm:"primaryKey"`
-	Nombre      string    `json:"nombre"`
-	Dificultad  string    `json:"dificultad"`
-	Precio      float64   `json:"precio"`
-	Direccion   string    `json:"direccion"`
-	ImageURL    string    `json:"imageURL"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	ID          	uint      `gorm:"primaryKey"`
+	Nombre      	string    `json:"nombre"`
+	Dificultad 	 	string    `json:"dificultad"`
+	Precio      	float64   `json:"precio"`
+	Descripcion   	string    `json:"descripcion"`
+	ImageURL    	string    `json:"imageURL"`
+	CreatedAt   	time.Time `json:"created_at"`
+	UpdatedAt   	time.Time `json:"updated_at"`
 }
 
 var DB *gorm.DB

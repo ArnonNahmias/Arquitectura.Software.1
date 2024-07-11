@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { TextField, Button, Typography, Container, Alert } from '@mui/material';
+import AuthContext from '../context/AuthContext';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -17,9 +19,7 @@ const LoginPage = () => {
         contrasena: password,
       });
       const { token, userId, type } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('userType', type);
+      login(token, type, userId);
       navigate('/');
     } catch (err) {
       setError('Invalid credentials');

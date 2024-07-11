@@ -1,40 +1,42 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { loginUser, logoutUser } from '../services/api'; // Asegúrate de que la ruta sea correcta
+import { useNavigate } from 'react-router-dom';
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userType, setUserType] = useState('');
-
-  const login = async (username, password) => {
-    try {
-      const user = await loginUser(username, password);
-      setIsAuthenticated(true);
-      setUserType(user.type); // Asume que la respuesta del login contiene el tipo de usuario
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await logoutUser();
-      setIsAuthenticated(false);
-      setUserType('');
-    } catch (error) {
-      throw error;
-    }
-  };
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Verificar si el usuario ya está autenticado (por ejemplo, verificando la cookie de token)
-    // Aquí deberías agregar la lógica para verificar si el usuario está autenticado
+    const token = localStorage.getItem('token');
+    const userType = localStorage.getItem('userType');
+    const userId = localStorage.getItem('userId');
+    if (token) {
+      setUser({ token, userType, userId });
+    }
   }, []);
 
+  const login = (token, userType, userId) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('userType', userType);
+    localStorage.setItem('userId', userId);
+    setUser({ token, userType, userId });
+    navigate('/');
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userType');
+    localStorage.removeItem('userId');
+    setUser(null);
+    navigate('/login');
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userType, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export default AuthContext;

@@ -65,7 +65,7 @@ const HomePage = () => {
                   Price: ${course.precio}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Address: {course.direccion}
+                  Description: {course.descripcion}
                 </Typography>
               </CardContent>
             </Card>

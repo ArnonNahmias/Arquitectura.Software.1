@@ -1,56 +1,76 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import { Link } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 import logo from '../assets/My-online-course.svg';
-import { AuthContext } from '../context/AuthContext'; // Asegúrate de que la ruta sea correcta
 
 const Header = () => {
-  const { isAuthenticated, userType, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { user, logout } = useContext(AuthContext);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
+  const headerStyles = {
+    appBar: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '0 20px',
+      background: 'linear-gradient(to right, #2196F3, #21CBF3)',
+      height: '120px', // Aquí puedes definir la altura del header
+    },
+    logo: {
+      height: '200px', // Define la altura máxima del logo
+    },
+    navButtons: {
+      display: 'flex',
+      alignItems: 'center',
+      height: '100%',
+      fontSize: '20px',
+    },
+    button: {
+      marginLeft: '16px',
+      color: '#fff',
+      fontSize: '1rem',
+      fontWeight: 'bold',
+      textDecoration: 'none',
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer',
+    },
+    linkButton: {
+      color: '#fff',
+      textDecoration: 'none',
+      marginLeft: '16px',
+    }
   };
 
   return (
-    <AppBar position="static">
-      <Toolbar sx={{ position: 'relative', zIndex: 1 }}>
-        <Box
-          component="img"
-          sx={{
-            height: 200, // Increase the height
-            position: 'absolute', // Position it absolutely
-            top: '50%', // Center it vertically
-            transform: 'translateY(-50%)', // Center it vertically
-            marginRight: 2,
-            zIndex: 0,
-          }}
-          alt="My Online Courses"
-          src={logo}
-        />
-        <Box sx={{ flexGrow: 1 }} />
-        <Button color="inherit" component={Link} to="/">Home</Button>
-        {isAuthenticated && userType === 'admin' && (
-          <Button color="inherit" component={Link} to="/manage">Manage</Button>
-        )}
-        {isAuthenticated && userType === 'normal' && (
-          <Button color="inherit" component={Link} to="/my-courses">My Courses</Button>
-        )}
-        <Button color="inherit" component={Link} to="/about">About us</Button>
-        {isAuthenticated ? (
-          <Button color="inherit" onClick={handleLogout}>Logout</Button>
+    <header style={headerStyles.appBar}>
+      <div>
+        <Link to="/">
+          <img src={logo} alt="My Online Course" style={headerStyles.logo} />
+        </Link>
+      </div>
+      <div style={headerStyles.navButtons}>
+        <Link to="/" style={headerStyles.linkButton}>Home</Link>
+        {!user ? (
+          <>
+            <Link to="/about" style={headerStyles.linkButton}>About Us</Link>
+            <Link to="/login" style={headerStyles.linkButton}>Log In</Link>
+            <Link to="/register" style={headerStyles.linkButton}>Register</Link>
+          </>
+        ) : user.userType === 'admin' ? (
+          <>
+            <Link to="/manage-courses" style={headerStyles.linkButton}>Manage Courses</Link>
+            <Link to="/about" style={headerStyles.linkButton}>About Us</Link>
+            <button onClick={logout} style={headerStyles.button}>Log Out</button>
+          </>
         ) : (
           <>
-            <Button color="inherit" component={Link} to="/login">Login</Button>
-            <Button color="inherit" component={Link} to="/register">Register</Button>
+            <Link to="/my-courses" style={headerStyles.linkButton}>My Courses</Link>
+            <Link to="/about" style={headerStyles.linkButton}>About Us</Link>
+            <button onClick={logout} style={headerStyles.button}>Log Out</button>
           </>
         )}
-      </Toolbar>
-    </AppBar>
+      </div>
+    </header>
   );
 };
 
