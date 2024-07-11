@@ -15,7 +15,7 @@ export const fetchCourses = async () => {
 export const loginUser = async (username, password) => {
   try {
     const response = await axios.post(`${API_URL}/login`, { username, password });
-    return response.data;
+    return response.data; // Asume que la respuesta contiene el tipo de usuario
   } catch (error) {
     console.error('Error logging in', error);
     throw error;
@@ -28,6 +28,15 @@ export const registerUser = async (username, password) => {
     return response.data;
   } catch (error) {
     console.error('Error registering', error);
+    throw error;
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    await axios.post(`${API_URL}/logout`);
+  } catch (error) {
+    console.error('Error logging out', error);
     throw error;
   }
 };

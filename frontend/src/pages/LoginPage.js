@@ -1,58 +1,58 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography, Alert } from '@mui/material';
-import { loginUser } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { TextField, Button, Typography, Container, Alert } from '@mui/material';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
-  const handleLoginSubmit = async (event) => {
-    event.preventDefault();
-    setError('');
-    setSuccess('');
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      const response = await loginUser(username, password);
-      setSuccess('Login successful!');
-      // Aquí puedes redirigir al usuario a otra página o hacer algo más
-    } catch (error) {
-      setError('Invalid username or password');
+      const response = await axios.post('http://localhost:8080/login', {
+        nombre_usuario: username,
+        contrasena: password,
+      });
+      const { token, userId, type } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('userType', type);
+      navigate('/');
+    } catch (err) {
+      setError('Invalid credentials');
     }
   };
 
   return (
-    <Box sx={{ maxWidth: 400, margin: 'auto', mt: 5 }}>
+    <Container maxWidth="sm">
       <Typography variant="h4" component="h1" gutterBottom>
         Login
       </Typography>
       {error && <Alert severity="error">{error}</Alert>}
-      {success && <Alert severity="success">{success}</Alert>}
-      <form onSubmit={handleLoginSubmit}>
+      <form onSubmit={handleLogin}>
         <TextField
           label="Username"
-          variant="outlined"
-          fullWidth
-          margin="normal"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          required
+          margin="normal"
+          fullWidth
         />
         <TextField
           label="Password"
           type="password"
-          variant="outlined"
-          fullWidth
-          margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
+          margin="normal"
+          fullWidth
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+        <Button type="submit" variant="contained" color="primary" fullWidth>
           Login
         </Button>
       </form>
-    </Box>
+    </Container>
   );
 };
 

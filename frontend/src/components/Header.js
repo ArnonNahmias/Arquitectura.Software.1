@@ -1,12 +1,21 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import logo from '../assets/My-online-course.svg';
+import { AuthContext } from '../context/AuthContext'; // Asegúrate de que la ruta sea correcta
 
 const Header = () => {
+  const { isAuthenticated, userType, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
   return (
     <AppBar position="static">
       <Toolbar sx={{ position: 'relative', zIndex: 1 }}>
@@ -25,9 +34,21 @@ const Header = () => {
         />
         <Box sx={{ flexGrow: 1 }} />
         <Button color="inherit" component={Link} to="/">Home</Button>
-        <Button color="inherit" component={Link} to="/about ">About us</Button>
-        <Button color="inherit" component={Link} to="/login">Login</Button>
-        <Button color="inherit" component={Link} to="/register">Register</Button>
+        {isAuthenticated && userType === 'admin' && (
+          <Button color="inherit" component={Link} to="/manage">Manage</Button>
+        )}
+        {isAuthenticated && userType === 'normal' && (
+          <Button color="inherit" component={Link} to="/my-courses">My Courses</Button>
+        )}
+        <Button color="inherit" component={Link} to="/about">About us</Button>
+        {isAuthenticated ? (
+          <Button color="inherit" onClick={handleLogout}>Logout</Button>
+        ) : (
+          <>
+            <Button color="inherit" component={Link} to="/login">Login</Button>
+            <Button color="inherit" component={Link} to="/register">Register</Button>
+          </>
+        )}
       </Toolbar>
     </AppBar>
   );

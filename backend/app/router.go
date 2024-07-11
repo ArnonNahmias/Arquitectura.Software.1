@@ -23,15 +23,15 @@ func SetupRouter() *gin.Engine {
 	router.GET("/search", controllers.Search)
 	router.GET("/search/:id", controllers.SearchByID)
 	router.POST("/register", controllers.Register)
+
+	// Rutas protegidas
 	protected := router.Group("/protected")
-	protected.Use(AuthMiddleware())
+	protected.Use(Auth()) // Usamos el middleware de autenticación
 	{
 		protected.GET("/", controllers.ProtectedEndpoint)
 	}
 	return router
 }
-
-
 
 func allowCORS(c *gin.Context) {
 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")

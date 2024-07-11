@@ -1,3 +1,4 @@
+// controllers/users_controller.go
 package controllers
 
 import (
@@ -39,7 +40,7 @@ func Login(c *gin.Context) {
 
 	token, userID, userType, err := services.Login(loginRequest.NombreUsuario, loginRequest.Contrasena)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
 
@@ -48,6 +49,12 @@ func Login(c *gin.Context) {
 		"userId": userID,
 		"type":   userType,
 	})
+}
+
+
+func Logout(c *gin.Context) {
+	c.SetCookie("token", "", -1, "/", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Logout successful"})
 }
 
 func ProtectedEndpoint(c *gin.Context) {

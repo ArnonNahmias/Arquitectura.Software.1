@@ -1,17 +1,21 @@
+// services/register.go
 package services
 
 import (
 	"backend/clients"
 	"backend/dao"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Register(username, password, userType string) error {
-	// Hashear la contraseña
-	hashedPassword := hashPassword(password)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
 
 	user := dao.Usuario{
 		NombreUsuario: username,
-		Contrasena:    hashedPassword,
+		Contrasena:    string(hashedPassword),
 		Tipo:          userType,
 	}
 

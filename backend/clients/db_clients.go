@@ -15,7 +15,6 @@ var DB *gorm.DB
 
 func InitDB() {
 	log.Println("Initializing database...")
-	// dsn := "root:admin@tcp(127.0.0.1:3306)/proyecto?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := "root:58005800@tcp(127.0.0.1:3306)/proyecto4?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -52,7 +51,14 @@ func SeedDB() {
 	DB.FirstOrCreate(&admin, dao.Usuario{NombreUsuario: "admin"})
 	DB.FirstOrCreate(&user, dao.Usuario{NombreUsuario: "user"})
 
-	log.Println("Seeding database...")
+	// Crear un nuevo usuario sin hashear la contraseña
+	plainPassword := "queso"
+	quesoUser := dao.Usuario{NombreUsuario: "queso", Contrasena: plainPassword, Tipo: "normal"}
+
+	DB.FirstOrCreate(&quesoUser, dao.Usuario{NombreUsuario: "queso"})
+
+	log.Println("Database seeded successfully")
+
 	cursos := []dao.Course{
 		{Nombre: "Ingles B2", Dificultad: "Medio", Precio: 45, Direccion: "José Roque Funes 1511 X5000ABE Córdoba", ImageURL: "https://diarium.usal.es/ireneigls/files/2018/09/b2-de-ingles.jpg"},
 		{Nombre: "Hacking Etico", Dificultad: "Dificil", Precio: 60, Direccion: "Paseo de la Reforma 505, CDMX", ImageURL: "https://www.pmg-ssi.com/wp-content/uploads/2023/08/he.jpg"},
