@@ -29,3 +29,17 @@ func SearchByName(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, courses)
 }
+
+func GetCoursesByCategory(c *gin.Context) {
+	category := c.Param("category")
+	courses, err := services.GetCoursesByCategory(category)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching courses by category"})
+		return
+	}
+	if len(courses) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No courses found in this category"})
+		return
+	}
+	c.JSON(http.StatusOK, courses)
+}

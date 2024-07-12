@@ -14,7 +14,8 @@ func SetupRouter() *gin.Engine {
 	// Rutas y controladores
 	router.GET("/courses", controllers.GetCourses)
 	router.GET("/courses/:id", controllers.SearchByID)
-	router.GET("/courses/name/:name", controllers.SearchByName)
+	router.GET("/courses/name/:name", controllers.SearchByName)	
+	router.GET("/courses/category/:category", controllers.GetCoursesByCategory) // Nueva ruta
 	// router.POST("/courses", controllers.CreateCourse)
 	// router.DELETE("/courses/:id", controllers.DeleteCourse)
 	router.POST("/login", controllers.Login)

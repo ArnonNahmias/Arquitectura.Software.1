@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { fetchCourses } from '../services/api';
-import { Box, Card, CardContent, CardMedia, Typography, Grid, CircularProgress, Alert, TextField, Button } from '@mui/material';
+import { Box, Card, CardContent, CardMedia, Typography, Grid, CircularProgress, Alert, TextField, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
 const HomePage = () => {
   const [courses, setCourses] = useState([]);
@@ -9,12 +8,13 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [searchType, setSearchType] = useState('name'); // Default search type is 'name'
 
   useEffect(() => {
     const getCourses = async () => {
       try {
-        const coursesData = await fetchCourses();
-        setCourses(coursesData);
+        const response = await axios.get('http://localhost:8080/courses');
+        setCourses(response.data);
       } catch (error) {
         console.error('Error fetching courses', error);
         setError('Error fetching courses');
@@ -36,14 +36,47 @@ const HomePage = () => {
     setError(null);
 
     try {
-      const responseById = await axios.get(`http://localhost:8080/courses/${searchQuery}`);
-      const responseByName = await axios.get(`http://localhost:8080/courses/name/${searchQuery}`);
-      
-      const coursesById = responseById.data ? [responseById.data] : [];
-      const coursesByName = responseByName.data || [];
-      
-      const combinedResults = [...coursesById, ...coursesByName];
-      
+      let combinedResults = [];
+      const lowerCaseQuery = searchQuery.toLowerCase();
+
+      if (searchType === 'id') {
+        // Search by ID
+        if (!isNaN(searchQuery)) {
+          try {
+            const responseById = await axios.get(`http://localhost:8080/courses/${searchQuery}`);
+            if (responseById.data) {
+              combinedResults = [responseById.data];
+            }
+          } catch (err) {
+            console.log(`ID search failed: ${err.message}`);
+          }
+        }
+      } else if (searchType === 'name') {
+        // Search by name
+        try {
+          const responseByName = await axios.get(`http://localhost:8080/courses/name/${lowerCaseQuery}`);
+          if (responseByName.data && responseByName.data.length > 0) {
+            combinedResults = responseByName.data;
+          }
+        } catch (err) {
+          console.log(`Name search failed: ${err.message}`);
+        }
+      } else if (searchType === 'category') {
+        // Search by category
+        try {
+          const responseByCategory = await axios.get(`http://localhost:8080/courses/category/${lowerCaseQuery}`);
+          if (responseByCategory.data && responseByCategory.data.length > 0) {
+            combinedResults = responseByCategory.data;
+          }
+        } catch (err) {
+          console.log(`Category search failed: ${err.message}`);
+        }
+      }
+
+      if (combinedResults.length === 0) {
+        throw new Error('No courses found');
+      }
+
       setSearchResults(combinedResults);
     } catch (error) {
       console.error('Error fetching courses:', error.response?.data || error.message);
@@ -77,6 +110,19 @@ const HomePage = () => {
         Available Courses
       </Typography>
       <Box display="flex" alignItems="center" mb={2}>
+        <FormControl variant="outlined" sx={{ minWidth: 120, marginRight: 2 }}>
+          <InputLabel id="search-type-label">Search By</InputLabel>
+          <Select
+            labelId="search-type-label"
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value)}
+            label="Search By"
+          >
+            <MenuItem value="id">ID</MenuItem>
+            <MenuItem value="name">Name</MenuItem>
+            <MenuItem value="category">Category</MenuItem>
+          </Select>
+        </FormControl>
         <TextField
           label="Search Courses"
           value={searchQuery}
@@ -102,6 +148,9 @@ const HomePage = () => {
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {course.nombre}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Category: {course.categoria}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Difficulty: {course.dificultad}

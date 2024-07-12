@@ -63,8 +63,8 @@ func SeedDB() {
 	log.Println("Database seeded successfully")
 
 	cursos := []dao.Course{
-		{Nombre: "Ingles B2", Dificultad: "Medio", Precio: 45, Descripcion: "Curso de ingles avanzado para aprobar tus examenes internacionales", ImageURL: "https://diarium.usal.es/ireneigls/files/2018/09/b2-de-ingles.jpg"},
-		{Nombre: "Hacking Etico", Dificultad: "Dificil", Precio: 60, Descripcion: "Curso de como ser hacker sin ser hacker", ImageURL: "https://www.pmg-ssi.com/wp-content/uploads/2023/08/he.jpg"},
+		{Nombre: "Ingles B2", Categoria: "Idiomas", Dificultad: "Medio", Precio: 45, Descripcion: "Curso de ingles avanzado para aprobar tus examenes internacionales", ImageURL: "https://diarium.usal.es/ireneigls/files/2018/09/b2-de-ingles.jpg"},
+		{Nombre: "Hacking Etico", Categoria: "Programación", Dificultad: "Dificil", Precio: 60, Descripcion: "Curso de como ser hacker sin ser hacker", ImageURL: "https://www.pmg-ssi.com/wp-content/uploads/2023/08/he.jpg"},
 	}
 	for _, curso := range cursos {
 		DB.Create(&curso)
