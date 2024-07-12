@@ -6,22 +6,26 @@ import (
 	"net/http"
 )
 
-func Search(c *gin.Context) {
-	query := c.Query("query")
-	courses, err := services.Search(query)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, courses)
-}
-
 func SearchByID(c *gin.Context) {
 	id := c.Param("id")
-	course, err := services.SearchByID(id)
+	course, err := services.GetCourseByID(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Course not found"})
 		return
 	}
 	c.JSON(http.StatusOK, course)
+}
+
+func SearchByName(c *gin.Context) {
+	name := c.Param("name")
+	courses, err := services.GetCoursesByName(name)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching courses"})
+		return
+	}
+	if len(courses) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No courses found"})
+		return
+	}
+	c.JSON(http.StatusOK, courses)
 }

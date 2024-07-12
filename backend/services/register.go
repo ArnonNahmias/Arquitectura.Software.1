@@ -1,27 +1,36 @@
-// services/register.go
 package services
 
+
 import (
-	"backend/clients"
-	"backend/dao"
-	"golang.org/x/crypto/bcrypt"
+    "backend/clients"
+    "errors"
+
+
+    "golang.org/x/crypto/bcrypt"
 )
 
-func Register(username, password, userType string) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
 
-	user := dao.Usuario{
-		NombreUsuario: username,
-		Contrasena:    string(hashedPassword),
-		Tipo:          userType,
-	}
+func RegisterS(username, password string, tipo string) error {
+    // Check if the user already exists
+    err := clients.SearchUser(username)
+    if err == nil {
+        return errors.New("username already taken")
+    }
 
-	if err := clients.DB.Create(&user).Error; err != nil {
-		return err
-	}
 
-	return nil
+    // Hash the password
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return errors.New("failed to hash password")
+    }
+
+    
+    // Create the new user
+    err = clients.CreateUser(username, string(hashedPassword), tipo)
+    if err != nil {
+        return errors.New("failed to create user")
+    }
+
+
+    return nil
 }

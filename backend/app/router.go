@@ -2,7 +2,6 @@ package app
 
 import (
 	"backend/controllers"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,15 +13,16 @@ func SetupRouter() *gin.Engine {
 
 	// Rutas y controladores
 	router.GET("/courses", controllers.GetCourses)
-	//router.POST("/courses", controllers.CreateCourse)
-	//router.DELETE("/courses/:id", controllers.DeleteCourse)
+	router.GET("/courses/:id", controllers.SearchByID)
+	router.GET("/courses/name/:name", controllers.SearchByName)
+	// router.POST("/courses", controllers.CreateCourse)
+	// router.DELETE("/courses/:id", controllers.DeleteCourse)
 	router.POST("/login", controllers.Login)
 	router.GET("/subscriptions", controllers.GetSubscriptions)
 	router.POST("/subscriptions", controllers.CreateSubscription)
 	router.DELETE("/subscriptions/:id", controllers.DeleteSubscription)
-	router.GET("/search", controllers.Search)
-	router.GET("/search/:id", controllers.SearchByID)
-	router.POST("/register", controllers.Register)
+	// router.GET("/search", controllers.Search) // Eliminar o comentar esta línea
+	router.POST("/register", controllers.RegisterC)
 
 	// Rutas protegidas
 	protected := router.Group("/protected")

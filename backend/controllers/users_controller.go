@@ -21,7 +21,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	err := services.Register(registerRequest.NombreUsuario, registerRequest.Contrasena, registerRequest.Tipo)
+	err := services.RegisterS(registerRequest.NombreUsuario, registerRequest.Contrasena, registerRequest.Tipo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

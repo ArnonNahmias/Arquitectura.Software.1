@@ -9,6 +9,9 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"time"
+	"errors"
 )
 
 var DB *gorm.DB
@@ -85,4 +88,32 @@ func SelectCoursesWithFilterName(query string) ([]dao.Course, error) {
 		return nil, result.Error
 	}
 	return courses, nil
+}
+
+func SearchUser(NombreUsuario string) error {
+    var user []dao.Usuario
+    result := DB.Where("NombreUsuario = ?", NombreUsuario).First(&user)
+    if result.Error != nil {
+        if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+            return errors.New("user not found")
+        }
+        return result.Error
+    }
+    return nil
+}
+
+
+func CreateUser(nombreUsuario, contrasena, tipo string) error {
+    user := dao.Usuario{
+        NombreUsuario: nombreUsuario,
+        Contrasena:    contrasena,
+        Tipo:          tipo,
+        CreatedAt:     time.Now(),
+        UpdatedAt:     time.Now(),
+    }
+    result := DB.Create(&user)
+    if result.Error != nil {
+        return result.Error
+    }
+    return nil
 }
