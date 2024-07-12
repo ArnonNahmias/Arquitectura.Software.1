@@ -23,20 +23,13 @@ export const loginUser = async (username, password) => {
 };
 
 export const registerUser = async (username, password) => {
-  try {
-    const response = await axios.post(`${API_URL}/register`, { username, password });
-    return response.data;
-  } catch (error) {
-    console.error('Error registering', error);
-    throw error;
-  }
-};
+  const response = await fetch('/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, password }),
+  });
 
-export const logoutUser = async () => {
-  try {
-    await axios.post(`${API_URL}/logout`);
-  } catch (error) {
-    console.error('Error logging out', error);
-    throw error;
-  }
+  return response;
 };

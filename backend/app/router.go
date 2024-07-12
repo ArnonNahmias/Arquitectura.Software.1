@@ -15,14 +15,13 @@ func SetupRouter() *gin.Engine {
 	router.GET("/courses", controllers.GetCourses)
 	router.GET("/courses/:id", controllers.SearchByID)
 	router.GET("/courses/name/:name", controllers.SearchByName)	
-	router.GET("/courses/category/:category", controllers.GetCoursesByCategory) // Nueva ruta
+	router.GET("/courses/category/:category", controllers.GetCoursesByCategory)
 	// router.POST("/courses", controllers.CreateCourse)
 	// router.DELETE("/courses/:id", controllers.DeleteCourse)
 	router.POST("/login", controllers.Login)
 	router.GET("/subscriptions", controllers.GetSubscriptions)
 	router.POST("/subscriptions", controllers.CreateSubscription)
 	router.DELETE("/subscriptions/:id", controllers.DeleteSubscription)
-	// router.GET("/search", controllers.Search) // Eliminar o comentar esta línea
 	router.POST("/register", controllers.RegisterC)
 
 	// Rutas protegidas

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, Alert } from '@mui/material';
-import { registerUser } from '../services/api';
+
+const API_URL = 'http://localhost:8080';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -13,14 +14,28 @@ const RegisterPage = () => {
     event.preventDefault();
     setError('');
     setSuccess('');
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
+
     try {
-      const response = await registerUser(username, password);
-      setSuccess('Registration successful!');
-      // Aquí puedes redirigir al usuario a otra página o hacer algo más
+      const response = await fetch(`${API_URL}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        setSuccess('Registration successful!');
+        // Optionally redirect or clear the form
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Registration failed');
+      }
     } catch (error) {
       setError('Error registering');
     }

@@ -72,48 +72,31 @@ func SeedDB() {
 	log.Println("Database seeded successfully")
 }
 
-func GetCourses1() ([]dao.Course, error) {
-	var courses []dao.Course
-	result := DB.Find(&courses)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return courses, nil
-}
-
-func SelectCoursesWithFilterName(query string) ([]dao.Course, error) {
-	var courses []dao.Course
-	result := DB.Where("Nombre LIKE ? ", "%"+query+"%").Find(&courses)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return courses, nil
-}
-
-func SearchUser(NombreUsuario string) error {
-    var user []dao.Usuario
-    result := DB.Where("NombreUsuario = ?", NombreUsuario).First(&user)
-    if result.Error != nil {
-        if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-            return errors.New("user not found")
-        }
-        return result.Error
-    }
-    return nil
-}
-
 
 func CreateUser(nombreUsuario, contrasena, tipo string) error {
-    user := dao.Usuario{
-        NombreUsuario: nombreUsuario,
-        Contrasena:    contrasena,
-        Tipo:          tipo,
-        CreatedAt:     time.Now(),
-        UpdatedAt:     time.Now(),
-    }
-    result := DB.Create(&user)
-    if result.Error != nil {
-        return result.Error
-    }
-    return nil
+	user := dao.Usuario{
+		NombreUsuario: nombreUsuario,
+		Contrasena:    contrasena,
+		Tipo:          tipo,
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
+	}
+	result := DB.Create(&user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+// SearchUser busca un usuario en la base de datos por nombre de usuario.
+func SearchUser(nombreUsuario string) error {
+	var user dao.Usuario
+	result := DB.Where("nombre_usuario = ?", nombreUsuario).First(&user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return errors.New("user not found")
+		}
+		return result.Error
+	}
+	return nil
 }

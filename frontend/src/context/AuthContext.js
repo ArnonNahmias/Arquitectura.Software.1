@@ -24,7 +24,11 @@ export const AuthProvider = ({ children }) => {
     navigate('/');
   };
 
-  const logout = () => {
+  const logout = async () => {
+    // Realiza una solicitud de logout al servidor para eliminar la cookie
+    await fetch('/logout', { method: 'POST' });
+
+    // Elimina el token del almacenamiento local
     localStorage.removeItem('token');
     localStorage.removeItem('userType');
     localStorage.removeItem('userId');
