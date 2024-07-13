@@ -18,7 +18,7 @@ func RegisterC(c *gin.Context) {
 		return
 	}
 
-	log.Println("Registering user:", userDetails.Username) // Log adicional
+	log.Println("Registering user:", userDetails.Username)
 
 	var tipo string = "normal"
 	err := services.RegisterS(userDetails.Username, userDetails.Password, tipo)

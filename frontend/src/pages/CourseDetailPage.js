@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Box, Typography, CircularProgress, Alert, Card, CardMedia, CardContent, Button } from '@mui/material';
 import AuthContext from '../context/AuthContext';
@@ -12,7 +12,6 @@ const CourseDetailPage = () => {
   const [subscribeError, setSubscribeError] = useState(null);
   const [subscribeSuccess, setSubscribeSuccess] = useState(null);
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -31,27 +30,23 @@ const CourseDetailPage = () => {
   }, [id]);
 
   const handleSubscribe = async () => {
-    setSubscribeError(null);
-    setSubscribeSuccess(null);
-
-    if (!user) {
-      navigate('/login');
+    console.log('User:', user); // Add this line for debugging
+    if (!user || !user.userId) {
+      setSubscribeError('You must be logged in to subscribe');
       return;
     }
-
+  
     try {
-      await axios.post(`http://localhost:8080/courses/${id}/subscribe`, {
-        userId: user.userId,
+      const response = await axios.post('http://localhost:8080/subscriptions', {
+        userID: parseInt(user.userId),
+        courseID: parseInt(id)
       });
-      setSubscribeSuccess('Successfully subscribed to the course!');
-    } catch (error) {
-      console.error('Error subscribing to the course', error);
+      console.log('Subscribed successfully:', response.data);
+      setSubscribeSuccess('Subscribed successfully!');
+    } catch (err) {
+      console.error('Error subscribing to the course', err);
       setSubscribeError('Error subscribing to the course');
     }
-  };
-
-  const handleLoginRedirect = () => {
-    navigate('/login');
   };
 
   if (loading) {
@@ -95,16 +90,6 @@ const CourseDetailPage = () => {
           >
             Subscribe to this Course
           </Button>
-          {!user && (
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleLoginRedirect}
-              sx={{ mb: 2 }}
-            >
-              Login to Subscribe
-            </Button>
-          )}
           {subscribeError && <Alert severity="error">{subscribeError}</Alert>}
           {subscribeSuccess && <Alert severity="success">{subscribeSuccess}</Alert>}
           <Typography variant="body1" paragraph>

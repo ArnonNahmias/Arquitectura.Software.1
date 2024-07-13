@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Box, Card, CardContent, CardMedia, Typography, Grid, CircularProgress, Alert, TextField, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const [courses, setCourses] = useState([]);
@@ -8,7 +9,8 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [searchType, setSearchType] = useState('name'); // Default search type is 'name'
+  const [searchType, setSearchType] = useState('name');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getCourses = async () => {
@@ -40,7 +42,6 @@ const HomePage = () => {
       const lowerCaseQuery = searchQuery.toLowerCase();
 
       if (searchType === 'id') {
-        // Search by ID
         if (!isNaN(searchQuery)) {
           try {
             const responseById = await axios.get(`http://localhost:8080/courses/${searchQuery}`);
@@ -52,7 +53,6 @@ const HomePage = () => {
           }
         }
       } else if (searchType === 'name') {
-        // Search by name
         try {
           const responseByName = await axios.get(`http://localhost:8080/courses/name/${lowerCaseQuery}`);
           if (responseByName.data && responseByName.data.length > 0) {
@@ -62,7 +62,6 @@ const HomePage = () => {
           console.log(`Name search failed: ${err.message}`);
         }
       } else if (searchType === 'category') {
-        // Search by category
         try {
           const responseByCategory = await axios.get(`http://localhost:8080/courses/category/${lowerCaseQuery}`);
           if (responseByCategory.data && responseByCategory.data.length > 0) {
@@ -84,6 +83,16 @@ const HomePage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCourseClick = (id) => {
+    navigate(`/course/${id}`);
+  };
+
+  const styles = {
+    courseCard: {
+      cursor: 'pointer',
+    },
   };
 
   if (loading) {
@@ -138,7 +147,7 @@ const HomePage = () => {
       <Grid container spacing={3}>
         {displayedCourses.map(course => (
           <Grid item xs={12} sm={6} md={4} key={course.ID}>
-            <Card>
+            <Card style={styles.courseCard} onClick={() => handleCourseClick(course.ID)}>
               <CardMedia
                 component="img"
                 height="auto"
@@ -153,13 +162,7 @@ const HomePage = () => {
                   Category: {course.categoria}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Difficulty: {course.dificultad}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
                   Price: ${course.precio}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Description: {course.descripcion}
                 </Typography>
               </CardContent>
             </Card>

@@ -19,10 +19,10 @@ func SetupRouter() *gin.Engine {
 	// router.POST("/courses", controllers.CreateCourse)
 	// router.DELETE("/courses/:id", controllers.DeleteCourse)
 	router.POST("/login", controllers.Login)
+	router.POST("/register", controllers.RegisterC)
 	router.GET("/subscriptions", controllers.GetSubscriptions)
 	router.POST("/subscriptions", controllers.CreateSubscription)
 	router.DELETE("/subscriptions/:id", controllers.DeleteSubscription)
-	router.POST("/register", controllers.RegisterC)
 
 	// Rutas protegidas
 	protected := router.Group("/protected")

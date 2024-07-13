@@ -18,11 +18,6 @@ type SearchResponse struct {
 	Results []Course `json:"results"`
 }
 
-type SubscribeRequest struct {
-	UserID   int64 `json:"user_id"`
-	CourseID int64 `json:"course_id"`
-}
-
 type SearchRequest struct {
 	IdCurso int `json:"IdCurso"`
 }

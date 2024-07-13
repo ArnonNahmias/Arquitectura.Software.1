@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import CourseDetailPage from './pages/CourseDetailPage'; // Importa el nuevo componente
 
 function App() {
   return (
@@ -18,9 +19,9 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/course/:id" element={<CourseDetailPage />} /> {/* Nueva ruta */}
         </Routes>
       </main>
-
       <Footer />
     </div>
   );
