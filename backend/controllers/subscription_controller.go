@@ -1,79 +1,71 @@
 package controllers
 
 import (
-	"log"
-	"backend/domain"
-	"backend/services"
-	"net/http"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
+    "backend/clients"
+    "backend/dao"
+    "backend/domain"
+    "backend/services"
+    "log"
+    "net/http"
+    "github.com/gin-gonic/gin"
 )
 
-// CreateSubscription creates a new subscription.
 func CreateSubscription(c *gin.Context) {
-	var request domain.SubscribeRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		log.Printf("Error binding JSON: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input", "details": err.Error()})
-		return
-	}
+    var request domain.SubscribeRequest
+    if err := c.ShouldBindJSON(&request); err != nil {
+        log.Printf("Error binding JSON: %v", err)
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input", "details": err.Error()})
+        return
+    }
 
-	// Logging the received request
-	log.Printf("Received subscription request: %+v\n", request)
+    // Logging the received request for debugging
+    log.Printf("Received subscription request: %+v\n", request)
 
-	// Validate IDs are not zero
-	if request.UserID == 0 || request.CourseID == 0 {
-		log.Println("Invalid user ID or course ID")
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID or course ID"})
-		return
-	}
+    // Validate IDs are not zero
+    if request.UserID == 0 || request.CourseID == 0 {
+        log.Printf("Invalid user ID or course ID: UserID=%d, CourseID=%d", request.UserID, request.CourseID)
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID or course ID"})
+        return
+    }
 
-	subscription := domain.Subscription{
-		IdUsuario: request.UserID,
-		IdCurso:   request.CourseID,
-	}
+    subscription := dao.Subscription{
+        IdUsuario: int(request.UserID),
+        IdCurso:   int(request.CourseID),
+    }
 
-	log.Println("Creating subscription...")
-	newSubscription, err := services.CreateSubscription(subscription)
-	if err != nil {
-		log.Printf("Error creating subscription: %v", err)
-		if err.Error() == "user not found" || err.Error() == "course not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating subscription", "details": err.Error()})
-		}
-		return
-	}
-	log.Println("Subscription created successfully")
-	c.JSON(http.StatusCreated, newSubscription)
+    log.Printf("Creating subscription with User ID: %d and Course ID: %d", subscription.IdUsuario, subscription.IdCurso)
+    newSubscription, err := services.CreateSubscription(subscription)
+    if err != nil {
+        log.Printf("Error creating subscription: %v", err)
+        if err.Error() == "user not found" || err.Error() == "course not found" {
+            c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+        } else {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating subscription", "details": err.Error()})
+        }
+        return
+    }
+    log.Println("Subscription created successfully")
+    c.JSON(http.StatusCreated, newSubscription)
 }
 
-// GetSubscriptions retrieves all subscriptions.
 func GetSubscriptions(c *gin.Context) {
-	subscriptions, err := services.GetSubscriptions()
-	if err != nil {
+	var subscriptions []dao.Subscription
+	if err := clients.DB.Find(&subscriptions).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching subscriptions"})
 		return
 	}
 	c.JSON(http.StatusOK, subscriptions)
 }
 
-// DeleteSubscription deletes a subscription.
 func DeleteSubscription(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid subscription ID"})
+	var subscription dao.Subscription
+	id := c.Param("id")
+	if err := clients.DB.First(&subscription, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Subscription not found"})
 		return
 	}
-
-	if err := services.DeleteSubscription(id); err != nil {
-		if err.Error() == "subscription not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Subscription not found"})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting subscription"})
-		}
+	if err := clients.DB.Delete(&subscription).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting subscription"})
 		return
 	}
 	c.Status(http.StatusNoContent)

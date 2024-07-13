@@ -30,13 +30,14 @@ const CourseDetailPage = () => {
   }, [id]);
 
   const handleSubscribe = async () => {
-    console.log('User:', user); // Add this line for debugging
+    console.log('User:', user.userId); // Add this line for debugging
     if (!user || !user.userId) {
       setSubscribeError('You must be logged in to subscribe');
       return;
     }
   
     try {
+      console.log(parseInt(user.userId), "hola")
       const response = await axios.post('http://localhost:8080/subscriptions', {
         userID: parseInt(user.userId),
         courseID: parseInt(id)
