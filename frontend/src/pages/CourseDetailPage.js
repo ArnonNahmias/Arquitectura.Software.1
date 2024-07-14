@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios';
 import { Box, Typography, CircularProgress, Alert, Card, CardMedia, CardContent, Button } from '@mui/material';
 import AuthContext from '../context/AuthContext';
@@ -12,6 +12,7 @@ const CourseDetailPage = () => {
   const [subscribeError, setSubscribeError] = useState(null);
   const [subscribeSuccess, setSubscribeSuccess] = useState(null);
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate(); // Define navigate
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -30,14 +31,13 @@ const CourseDetailPage = () => {
   }, [id]);
 
   const handleSubscribe = async () => {
-    console.log('User:', user.userId); 
     if (!user || !user.userId) {
-      setSubscribeError('You must be logged in to subscribe');
+      navigate('/login'); // Redirige al login si no está logeado
       return;
     }
-  
+
     try {
-      console.log(parseInt(user.userId), "hola")
+      console.log(parseInt(user.userId), "hola");
       const response = await axios.post('http://localhost:8080/subscriptions', {
         userID: parseInt(user.userId),
         courseID: parseInt(id)
