@@ -2,6 +2,10 @@ package app
 
 import (
 	"backend/controllers"
+	"time"
+
+	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,39 +13,57 @@ func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
 	// Middlewares
-	router.Use(allowCORS)
+	router.Use(AllowCors())
 
 	// Rutas y controladores
 	router.GET("/courses", controllers.GetCourses)
 	router.GET("/courses/:id", controllers.SearchByID)
 	router.GET("/courses/name/:name", controllers.SearchByName)	
 	router.GET("/courses/category/:category", controllers.GetCoursesByCategory)
-	// router.POST("/courses", controllers.CreateCourse)
-	// router.DELETE("/courses/:id", controllers.DeleteCourse)
+	
 	router.POST("/login", controllers.Login)
 	router.POST("/register", controllers.RegisterC)
-	router.GET("/user/:userId/subscriptions", controllers.GetUserSubscriptions)
-	router.POST("/subscriptions", controllers.CreateSubscription)
-	router.DELETE("/subscriptions/:id", controllers.DeleteSubscription)
+	
+	// Ruta para subir archivos
+    router.POST("/upload", controllers.UploadFileHandler)
+
 
 	// Rutas protegidas
-	protected := router.Group("/protected")
-	protected.Use(Auth()) // Usamos el middleware de autenticación
+	protectedAdmin := router.Group("/").Use(AuthAdmin())
+	protectedNormal := router.Group("/").Use(AuthNormal())
+	protectedAmbos := router.Group("/").Use(AuthAmbos())
+
+	
 	{
-		protected.GET("/", controllers.ProtectedEndpoint)
+		protectedAdmin.POST("/courses", controllers.CreateCourse)
+		protectedAdmin.DELETE("/courses/:id", controllers.DeleteCourse)
+		protectedAdmin.PUT("/courses/:id", controllers.UpdateCourseHandler)
+	}
+
+	{
+		protectedNormal.GET("/subscriptions", controllers.GetSubscriptions)
+		protectedNormal.POST("/subscriptions", controllers.CreateSubscription)
+		protectedNormal.DELETE("/subscriptions/:id", controllers.DeleteSubscription)
+		protectedNormal.GET("/subscriptions/:iduser", controllers.GetSubscriptionsByUser)
+		
+	}
+
+	{
+		protectedAmbos.GET("/courses/suscription/:id", controllers.GetSuscriptionByIdUser)
+		protectedAmbos.POST("/course/chat", controllers.CreateChatMessage)
+		protectedAmbos.GET("/course/:courseId/chat", controllers.GetChatMessagesByCourseID)
+        
 	}
 	return router
 }
 
-func allowCORS(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
-	c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
-	c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
-	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	if c.Request.Method == "OPTIONS" {
-		c.AbortWithStatus(204)
-		return
-	}
-	c.Next()
+func AllowCors() gin.HandlerFunc {
+    return cors.New(cors.Config{
+        AllowOrigins:     []string{"*"}, // Permitir todos los orígenes
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+        AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true,
+        MaxAge:           12 * time.Hour,
+    })
 }

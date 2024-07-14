@@ -15,7 +15,7 @@ const HomePage = () => {
   useEffect(() => {
     const getCourses = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/courses');
+        const response = await axios.get(process.env.REACT_APP_API + "/courses");
         setCourses(response.data);
       } catch (error) {
         console.error('Error fetching courses', error);
@@ -44,7 +44,7 @@ const HomePage = () => {
       if (searchType === 'id') {
         if (!isNaN(searchQuery)) {
           try {
-            const responseById = await axios.get(`http://localhost:8080/courses/${searchQuery}`);
+            const responseById = await axios.get(`${process.env.REACT_APP_API}/courses/${searchQuery}`);
             if (responseById.data) {
               combinedResults = [responseById.data];
             }
@@ -54,7 +54,7 @@ const HomePage = () => {
         }
       } else if (searchType === 'name') {
         try {
-          const responseByName = await axios.get(`http://localhost:8080/courses/name/${lowerCaseQuery}`);
+          const responseByName = await axios.get(`${process.env.REACT_APP_API}/courses/name/${lowerCaseQuery}`);
           if (responseByName.data && responseByName.data.length > 0) {
             combinedResults = responseByName.data;
           }
@@ -63,7 +63,7 @@ const HomePage = () => {
         }
       } else if (searchType === 'category') {
         try {
-          const responseByCategory = await axios.get(`http://localhost:8080/courses/category/${lowerCaseQuery}`);
+          const responseByCategory = await axios.get(`${process.env.REACT_APP_API}/courses/category/${lowerCaseQuery}`);
           if (responseByCategory.data && responseByCategory.data.length > 0) {
             combinedResults = responseByCategory.data;
           }
@@ -140,17 +140,25 @@ const HomePage = () => {
           fullWidth
           margin="normal"
         />
-        <Button variant="contained" color="primary" onClick={handleSearch} style={{ marginLeft: '16px', height: '56px' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSearch}
+          style={{ marginLeft: "16px", height: "56px" }}
+        >
           Search
         </Button>
       </Box>
       <Grid container spacing={3}>
-        {displayedCourses.map(course => (
+        {displayedCourses.map((course) => (
           <Grid item xs={12} sm={6} md={4} key={course.ID}>
-            <Card style={styles.courseCard} onClick={() => handleCourseClick(course.ID)}>
+            <Card
+              style={styles.courseCard}
+              onClick={() => handleCourseClick(course.ID)}
+            >
               <CardMedia
                 component="img"
-                height="auto"
+                style={{ width: 300, height: 250 }}
                 image={course.imageURL}
                 alt={course.nombre}
               />

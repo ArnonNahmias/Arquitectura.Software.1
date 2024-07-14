@@ -1,80 +1,103 @@
-import React, { useState } from 'react';
-import { Container, Typography, Box, TextField, Button } from '@mui/material';
+// src/components/AboutUs.js
+import React from "react";
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  Box,
+} from "@mui/material";
 
-const AboutPage = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+const teamMembers = [
+  {
+    name: "Felipe Ganame",
+    role: "CEO & Founder",
+    image:
+      "https://cdn.urbantecno.com/urbantecno/s/2023-01-05-11-27-elon-musk.png", // Reemplaza con la URL de la imagen real
+    description:
+      "Felipe es el fundador de nuestra plataforma de cursos con más de 20 años de experiencia en la industria educativa.",
+  },
+  {
+    name: "Joaquin Lista",
+    role: "CTO",
+    image:
+      "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcS4Zmm2GK0bUvH0HebvXiTu3OV9AjJhXYsYxzIlSUuoSFv2cDdZ", // Reemplaza con la URL de la imagen real
+    description:
+      "Joaco lidera nuestro equipo de tecnología, asegurando que nuestra plataforma esté siempre a la vanguardia.",
+  },
+  {
+    name: "Arnon Nahmias",
+    role: "COO",
+    image: "https://i.blogs.es/c3747a/steve-jobs-presentacion/375_375.webp",
+    description:
+      "Arnon es nuestro director de operaciones, con una gran experiencia en la gestión y optimización de procesos empresariales.",
+  },
+];
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle form submission
-    console.log('Name:', name);
-    console.log('Email:', email);
-    console.log('Message:', message);
-  };
-
+const AboutUs = () => {
   return (
-    <Container maxWidth="md">
-      <Box sx={{ my: 5 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          About Us
+    <Container maxWidth="lg">
+      <Box mt={5}>
+        <Typography variant="h3" align="center" gutterBottom>
+          Sobre Nosotros
         </Typography>
-        <Typography variant="body1" paragraph>
-          Welcome to My Online Courses, your number one source for all things related to online education.
-          We're dedicated to giving you the very best of online courses, with a focus on quality content, 
-          accessibility, and a great learning experience.
+        <Typography variant="body1" align="center" paragraph>
+          Nuestra misión es proporcionar cursos de alta calidad para todos, en
+          cualquier momento y en cualquier lugar. Creemos en el poder de la
+          educación para transformar vidas y estamos comprometidos a brindar una
+          experiencia de aprendizaje excepcional.
         </Typography>
-        <Typography variant="body1" paragraph>
-          Created in 2024 by a group of UCC students, this page was designed using React, Golang, MYSQL, and Docker.
+        <Typography variant="h4" align="center" gutterBottom>
+          Nuestro Equipo
         </Typography>
-        <Typography variant="body1" paragraph>
-          We hope you find this page appealing and useful, please enjoy our courses as much as we enjoy offering them to you. If you have any questions or comments, 
-          please don't hesitate to contact us.
-        </Typography>
-      </Box>
-      <Box sx={{ my: 5 }}>
-        <Typography variant="h4" component="h2" gutterBottom>
-          Contact Us
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-          <TextField
-            label="Name"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <TextField
-            label="Email"
-            type="email"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <TextField
-            label="Message"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-            multiline
-            rows={4}
-          />
-          <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-            Submit
-          </Button>
+        <Grid container spacing={4}>
+          {teamMembers.map((member, index) => (
+            <Grid item key={index} xs={12} sm={6} md={4}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  height="250"
+                  image={member.image}
+                  alt={member.name}
+                />
+                <CardContent>
+                  <Typography variant="h5" component="div">
+                    {member.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {member.role}
+                  </Typography>
+                  <Typography variant="body1" color="text.primary">
+                    {member.description}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+        <Box mt={5}>
+          <Typography variant="h4" align="center" gutterBottom>
+            Nuestra Visión
+          </Typography>
+          <Typography variant="body1" align="center" paragraph>
+            Ser la plataforma de cursos en línea líder a nivel mundial,
+            reconocida por la calidad de nuestros contenidos y la efectividad de
+            nuestros métodos de enseñanza.
+          </Typography>
+          <Typography variant="h4" align="center" gutterBottom>
+            Nuestros Valores
+          </Typography>
+          <Typography variant="body1" align="center" paragraph>
+            Innovación, calidad, accesibilidad y compromiso con nuestros
+            estudiantes. Nos esforzamos por mejorar continuamente y brindar el
+            mejor servicio posible.
+          </Typography>
         </Box>
       </Box>
     </Container>
   );
 };
 
-export default AboutPage;
+export default AboutUs;

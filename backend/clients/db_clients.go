@@ -10,15 +10,15 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"time"
 	"errors"
+	"time"
 )
 
 var DB *gorm.DB
 
 func InitDB() {
 	log.Println("Initializing database...")
-	dsn := "root:58005800@tcp(127.0.0.1:3306)/proyecto4?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:58005800@tcp(127.0.0.1:3306)/proyecto1?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -32,7 +32,7 @@ func InitDB() {
 
 func Migrate() {
 	log.Println("Migrating database...")
-	DB.AutoMigrate(&dao.Usuario{}, &dao.Course{}, &dao.Subscription{})
+	DB.AutoMigrate(&dao.Usuario{}, &dao.Course{}, &dao.Subscription{}, &dao.Chat{})
 }
 
 func hashPassword(password string) string {
@@ -54,12 +54,6 @@ func SeedDB() {
 	DB.FirstOrCreate(&admin, dao.Usuario{NombreUsuario: "admin"})
 	DB.FirstOrCreate(&user, dao.Usuario{NombreUsuario: "user"})
 
-	// Crear un nuevo usuario sin hashear la contraseña
-	plainPassword := "queso"
-	quesoUser := dao.Usuario{NombreUsuario: "queso", Contrasena: plainPassword, Tipo: "normal"}
-
-	DB.FirstOrCreate(&quesoUser, dao.Usuario{NombreUsuario: "queso"})
-
 	log.Println("Database seeded successfully")
 
 	cursos := []dao.Course{
@@ -70,6 +64,7 @@ func SeedDB() {
 		DB.Create(&curso)
 	}
 	log.Println("Database seeded successfully")
+
 }
 
 

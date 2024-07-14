@@ -2,15 +2,18 @@ package controllers
 
 import (
 	"backend/services"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func RegisterC(c *gin.Context) {
 	var userDetails struct {
 		Username string `json:"username" binding:"required"`
 		Password string `json:"password" binding:"required"`
+		Tipo     string `json:"tipo" binding:"required,oneof=normal admin"`
+
 	}
 
 	if err := c.ShouldBindJSON(&userDetails); err != nil {
@@ -20,8 +23,8 @@ func RegisterC(c *gin.Context) {
 
 	log.Println("Registering user:", userDetails.Username)
 
-	var tipo string = "normal"
-	err := services.RegisterS(userDetails.Username, userDetails.Password, tipo)
+	//var tipo string = "normal"
+	err := services.RegisterS(userDetails.Username, userDetails.Password, "normal")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

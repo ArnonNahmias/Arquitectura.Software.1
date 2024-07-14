@@ -1,16 +1,30 @@
 package services
 
 import (
-    "errors"
-    "log"
-    "time"
-    "backend/clients"
-    "backend/dao"
-    "gorm.io/gorm"
+	"errors"
+	"log"
+
+	//"time"
+	"backend/clients"
+	"backend/dao"
+
+	"gorm.io/gorm"
 )
 
 // CreateSubscription crea una nueva suscripción.
 func CreateSubscription(subscription dao.Subscription) (dao.Subscription, error) {
+
+    // Busca que la suscricion no exista.
+     // Buscar si ya existe una suscripción con IdUsuario e IdCurso
+        var existingSubscription dao.Subscription
+        result := clients.DB.Where("id_usuario = ? AND id_curso = ?", subscription.IdUsuario, subscription.IdCurso).First(&existingSubscription)
+
+        if result.RowsAffected > 0 {
+            // Si ya existe, devolver un mensaje
+            return subscription, errors.New(`la suscripción ya existe`)
+
+        }
+
     tx := clients.DB.Begin()
     defer func() {
         if r := recover(); r != nil {
@@ -43,8 +57,8 @@ func CreateSubscription(subscription dao.Subscription) (dao.Subscription, error)
     }
 
     // Crear la suscripción
-    subscription.CreatedAt = time.Now()
-    subscription.UpdatedAt = time.Now()
+    //subscription.CreatedAt = time.Now()
+    //subscription.UpdatedAt = time.Now()
     if err := tx.Create(&subscription).Error; err != nil {
         tx.Rollback()
         return subscription, err
@@ -57,29 +71,13 @@ func CreateSubscription(subscription dao.Subscription) (dao.Subscription, error)
     return subscription, nil
 }
 
-
-// GetUserSubscriptions fetches subscriptions for a given user ID.
-func GetUserSubscriptions(userId int64) ([]dao.Course, error) {
+// GetSubscriptions obtiene todas las suscripciones.
+func GetSubscriptions() ([]dao.Subscription, error) {
 	var subscriptions []dao.Subscription
-	var courses []dao.Course
-
-	// Fetch subscriptions for the user
-	if err := clients.DB.Where("id_usuario = ?", userId).Find(&subscriptions).Error; err != nil {
-		log.Printf("Error fetching subscriptions for user ID %d: %v", userId, err)
+	if err := clients.DB.Find(&subscriptions).Error; err != nil {
 		return nil, err
 	}
-
-	// Fetch courses for each subscription
-	for _, subscription := range subscriptions {
-		var course dao.Course
-		if err := clients.DB.First(&course, subscription.IdCurso).Error; err == nil {
-			courses = append(courses, course)
-		} else {
-			log.Printf("Error fetching course ID %d for subscription ID %d: %v", subscription.IdCurso, subscription.IdSubscription, err)
-		}
-	}
-
-	return courses, nil
+	return subscriptions, nil
 }
 
 // DeleteSubscription elimina una suscripción por ID.

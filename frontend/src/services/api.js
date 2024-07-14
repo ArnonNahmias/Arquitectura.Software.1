@@ -1,10 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080'; // Asegúrate de que esta URL sea correcta
 
 export const fetchCourses = async () => {
   try {
-    const response = await axios.get(`${API_URL}/courses`);
+    const response = await axios.get(`${process.env.REACT_APP_API}/courses`);
     return response.data;
   } catch (error) {
     console.error('Error fetching courses', error);
@@ -14,7 +13,10 @@ export const fetchCourses = async () => {
 
 export const loginUser = async (username, password) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, { username, password });
+    const response = await axios.post(`${process.env.REACT_APP_API}/login`, {
+      username,
+      password,
+    });
     return response.data; // Asume que la respuesta contiene el tipo de usuario
   } catch (error) {
     console.error('Error logging in', error);
@@ -32,14 +34,4 @@ export const registerUser = async (username, password) => {
   });
 
   return response;
-};
-
-export const fetchUserSubscriptions = async (userId) => {
-  try {
-    const response = await axios.get(`${API_URL}/user/${userId}/subscriptions`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching user subscriptions:', error);
-    throw error;
-  }
 };

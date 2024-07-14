@@ -5,7 +5,6 @@ import logo from '../assets/My-online-course.svg';
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
-
   const headerStyles = {
     appBar: {
       display: 'flex',
@@ -58,7 +57,7 @@ const Header = () => {
           </>
         ) : user.userType === 'admin' ? (
           <>
-            <Link to="/manage-courses" style={headerStyles.linkButton}>Manage Courses</Link>
+            <Link to="/create-course" style={headerStyles.linkButton}>Create Course</Link>
             <Link to="/about" style={headerStyles.linkButton}>About Us</Link>
             <button onClick={logout} style={headerStyles.button}>Log Out</button>
           </>

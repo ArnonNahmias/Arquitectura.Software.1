@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, Alert } from '@mui/material';
-import { useHref } from 'react-router-dom';
 
-const API_URL = 'http://localhost:8080';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -22,12 +20,12 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await fetch(`${API_URL}/register`, {
+      const response = await fetch(`${process.env.REACT_APP_API}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, tipo:"normal" }),
       });
 
       if (response.ok) {

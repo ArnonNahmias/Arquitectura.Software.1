@@ -5,7 +5,7 @@ import "time"
 type Course struct {
 	IdCurso    		int64     `json:"id"`          // Course ID
 	Nombre     		string    `json:"title"`       // Course title
-	Categoria		string 	  `json:"categoria`
+	Categoria		string 	  `json:"categoria"`
 	Dificultad 		string    `json:"description"` // Course description
 	Precio     		string    `json:"category"`    // Course Category. Allowed values: to be defined
 	Descripcion		string    `json:"descripcion"`
