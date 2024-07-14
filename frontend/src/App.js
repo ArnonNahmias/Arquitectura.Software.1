@@ -7,7 +7,8 @@ import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import CourseDetailPage from './pages/CourseDetailPage'; // Importa el nuevo componente
+import CourseDetailPage from './pages/CourseDetailPage';
+import MyCoursesPage from './pages/MyCoursesPage'; // Import MyCoursesPage
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/course/:id" element={<CourseDetailPage />} /> {/* Nueva ruta */}
+          <Route path="/course/:id" element={<CourseDetailPage />} />
+          <Route path="/my-courses" element={<MyCoursesPage />} /> {/* Add the route for MyCoursesPage */}
         </Routes>
       </main>
       <Footer />

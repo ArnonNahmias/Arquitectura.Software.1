@@ -20,7 +20,7 @@ func SetupRouter() *gin.Engine {
 	// router.DELETE("/courses/:id", controllers.DeleteCourse)
 	router.POST("/login", controllers.Login)
 	router.POST("/register", controllers.RegisterC)
-	router.GET("/subscriptions", controllers.GetSubscriptions)
+	router.GET("/user/:userId/subscriptions", controllers.GetUserSubscriptions)
 	router.POST("/subscriptions", controllers.CreateSubscription)
 	router.DELETE("/subscriptions/:id", controllers.DeleteSubscription)
 

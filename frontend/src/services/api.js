@@ -33,3 +33,13 @@ export const registerUser = async (username, password) => {
 
   return response;
 };
+
+export const fetchUserSubscriptions = async (userId) => {
+  try {
+    const response = await axios.get(`${API_URL}/user/${userId}/subscriptions`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user subscriptions:', error);
+    throw error;
+  }
+};

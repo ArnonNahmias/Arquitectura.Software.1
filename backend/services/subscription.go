@@ -57,13 +57,29 @@ func CreateSubscription(subscription dao.Subscription) (dao.Subscription, error)
     return subscription, nil
 }
 
-// GetSubscriptions obtiene todas las suscripciones.
-func GetSubscriptions() ([]dao.Subscription, error) {
+
+// GetUserSubscriptions fetches subscriptions for a given user ID.
+func GetUserSubscriptions(userId int64) ([]dao.Course, error) {
 	var subscriptions []dao.Subscription
-	if err := clients.DB.Find(&subscriptions).Error; err != nil {
+	var courses []dao.Course
+
+	// Fetch subscriptions for the user
+	if err := clients.DB.Where("id_usuario = ?", userId).Find(&subscriptions).Error; err != nil {
+		log.Printf("Error fetching subscriptions for user ID %d: %v", userId, err)
 		return nil, err
 	}
-	return subscriptions, nil
+
+	// Fetch courses for each subscription
+	for _, subscription := range subscriptions {
+		var course dao.Course
+		if err := clients.DB.First(&course, subscription.IdCurso).Error; err == nil {
+			courses = append(courses, course)
+		} else {
+			log.Printf("Error fetching course ID %d for subscription ID %d: %v", subscription.IdCurso, subscription.IdSubscription, err)
+		}
+	}
+
+	return courses, nil
 }
 
 // DeleteSubscription elimina una suscripción por ID.

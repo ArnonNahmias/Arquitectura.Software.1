@@ -30,7 +30,7 @@ const CourseDetailPage = () => {
   }, [id]);
 
   const handleSubscribe = async () => {
-    console.log('User:', user.userId); // Add this line for debugging
+    console.log('User:', user.userId); 
     if (!user || !user.userId) {
       setSubscribeError('You must be logged in to subscribe');
       return;

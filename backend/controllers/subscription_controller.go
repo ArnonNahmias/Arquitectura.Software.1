@@ -8,6 +8,7 @@ import (
     "log"
     "net/http"
     "github.com/gin-gonic/gin"
+    "strconv"
 )
 
 func CreateSubscription(c *gin.Context) {
@@ -48,12 +49,20 @@ func CreateSubscription(c *gin.Context) {
     c.JSON(http.StatusCreated, newSubscription)
 }
 
-func GetSubscriptions(c *gin.Context) {
-	var subscriptions []dao.Subscription
-	if err := clients.DB.Find(&subscriptions).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching subscriptions"})
+func GetUserSubscriptions(c *gin.Context) {
+	userIdStr := c.Param("userId")
+	userId, err := strconv.ParseInt(userIdStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
+
+	subscriptions, err := services.GetUserSubscriptions(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching subscriptions", "details": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, subscriptions)
 }
 

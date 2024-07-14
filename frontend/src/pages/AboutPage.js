@@ -1,128 +1,80 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { Box, Typography, CircularProgress, Alert, Card, CardMedia, CardContent, Button } from '@mui/material';
-import AuthContext from '../context/AuthContext';
+import React, { useState } from 'react';
+import { Container, Typography, Box, TextField, Button } from '@mui/material';
 
-const CourseDetailPage = () => {
-  const { id } = useParams();
-  const [course, setCourse] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [subscribeError, setSubscribeError] = useState(null);
-  const [subscribeSuccess, setSubscribeSuccess] = useState(null);
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
+const AboutPage = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/courses/${id}`);
-        setCourse(response.data);
-      } catch (error) {
-        console.error('Error fetching course details', error);
-        setError('Error fetching course details');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourse();
-  }, [id]);
-
-  const handleSubscribe = async () => {
-    setSubscribeError(null);
-    setSubscribeSuccess(null);
-
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    try {
-      await axios.post(`http://localhost:8080/courses/${id}/subscribe`, {
-        userId: user.userId,
-      });
-      setSubscribeSuccess('Successfully subscribed to the course!');
-    } catch (error) {
-      console.error('Error subscribing to the course', error);
-      setSubscribeError('Error subscribing to the course');
-    }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Handle form submission
+    console.log('Name:', name);
+    console.log('Email:', email);
+    console.log('Message:', message);
   };
-
-  const handleLoginRedirect = () => {
-    navigate('/login');
-  };
-
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Alert severity="error">{error}</Alert>
-      </Box>
-    );
-  }
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Card>
-        {course?.imageURL && (
-          <Box sx={{ maxWidth: 500, maxHeight: 500, mx: 'auto' }}>
-            <CardMedia
-              component="img"
-              image={course.imageURL}
-              alt={course.nombre}
-              sx={{ maxWidth: 500, maxHeight: 500 }}
-            />
-          </Box>
-        )}
-        <CardContent>
-          <Typography variant="h4" component="h1" gutterBottom>
-            {course.nombre}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubscribe}
-            sx={{ mb: 2 }}
-          >
-            Subscribe to this Course
+    <Container maxWidth="md">
+      <Box sx={{ my: 5 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          About Us
+        </Typography>
+        <Typography variant="body1" paragraph>
+          Welcome to My Online Courses, your number one source for all things related to online education.
+          We're dedicated to giving you the very best of online courses, with a focus on quality content, 
+          accessibility, and a great learning experience.
+        </Typography>
+        <Typography variant="body1" paragraph>
+          Created in 2024 by a group of UCC students, this page was designed using React, Golang, MYSQL, and Docker.
+        </Typography>
+        <Typography variant="body1" paragraph>
+          We hope you find this page appealing and useful, please enjoy our courses as much as we enjoy offering them to you. If you have any questions or comments, 
+          please don't hesitate to contact us.
+        </Typography>
+      </Box>
+      <Box sx={{ my: 5 }}>
+        <Typography variant="h4" component="h2" gutterBottom>
+          Contact Us
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+          <TextField
+            label="Name"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <TextField
+            label="Email"
+            type="email"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <TextField
+            label="Message"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            required
+            multiline
+            rows={4}
+          />
+          <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+            Submit
           </Button>
-          {!user && (
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleLoginRedirect}
-              sx={{ mb: 2 }}
-            >
-              Login to Subscribe
-            </Button>
-          )}
-          {subscribeError && <Alert severity="error">{subscribeError}</Alert>}
-          {subscribeSuccess && <Alert severity="success">{subscribeSuccess}</Alert>}
-          <Typography variant="body1" paragraph>
-            {course.descripcion}
-          </Typography>
-          <Typography variant="body1" paragraph>
-            Category: {course.categoria}
-          </Typography>
-          <Typography variant="body1" paragraph>
-            Difficulty: {course.dificultad}
-          </Typography>
-          <Typography variant="body1" paragraph>
-            Price: ${course.precio}
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
-export default CourseDetailPage;
+export default AboutPage;
